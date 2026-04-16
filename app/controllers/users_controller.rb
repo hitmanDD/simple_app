@@ -1,3 +1,5 @@
-def new
-  @user = User.new
+class UsersController < ApplicationController
+  def new
+    # здесь пока может быть пусто
+  end
 end
