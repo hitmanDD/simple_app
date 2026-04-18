@@ -23,6 +23,6 @@ class UsersController < ApplicationController
     # Это защита: мы разрешаем записывать только эти 4 поля
     def user_params
       params.require(:user).permit(:name, :email, :password,
-                                   :password_confirmation)
+                                   :password_confirmation, :bio )
     end
 end

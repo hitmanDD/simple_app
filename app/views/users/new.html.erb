@@ -15,8 +15,13 @@
 
       <%= f.label :password_confirmation, "Confirmation" %>
       <%= f.password_field :password_confirmation, class: 'form-control' %>
+      
+      <%# Добавляем в форму регистрации био %>
 
+      <%= f.label :bio, "Расскажите о себе" %>
+      <%= f.text_area :bio, class: 'form-control custom-bio-area', placeholder: "Напишите пару слов о себе..." %>
       <%= f.submit "Создать мой аккаунт", class: "btn btn-primary" %>
+
     <% end %>
   </div>
 </div>

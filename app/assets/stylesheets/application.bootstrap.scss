@@ -1,2 +1,18 @@
 @import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-icons/font/bootstrap-icons';
+
+.custom-bio-area {
+    border: 2px solid #3498db;
+    border-radius: 8px;
+    min-height: 100px;
+    transition: 0.3s;
+    margin-bottom: 15px;
+    /* Добавим отступ снизу */
+
+    &:focus {
+        border-color: #2ecc71;
+        box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
+        outline: none;
+        /* Уберем стандартный контур браузера */
+    }
+}
