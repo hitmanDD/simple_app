@@ -2,6 +2,8 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
+    @notes = @user.notes # Достаем все заметки этого пользователя
+    @note = current_user.notes.build # Пустая модель для формы
   end
 
   def new

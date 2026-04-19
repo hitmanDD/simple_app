@@ -1,0 +1,6 @@
+<%= form_with(model: @note, local: true) do |f| %>
+  <div class="field">
+    <%= f.text_area :content, placeholder: "Напишите новую заметку..." %>
+  </div>
+  <%= f.submit "Опубликовать", class: "btn btn-primary" %>
+<% end %>

@@ -1,4 +1,28 @@
 <%= provide(:title, "Home") %>
+
+<% if logged_in? %>
+  <div class="alert alert-success">
+    Вы вошли как <%= current_user.name %>!
+  </div>
+<% end %>
+
 <h1>Добро пожаловать</h1>
 <p>Учебное приложение на Ruby on Rails 7. По мотивам руководства Майкла Хартла.</p>
-<%= link_to "Создать аккаунт!", signup_path, class: "btn btn-lg btn-primary" %>
+
+<% if logged_in? %>
+<%= render 'shared/user_info' %>
+  <div class="row">
+    <aside class="col-md-4">
+      <section class="user_info">
+        <%= render 'shared/user_info' %>
+      </section>
+      <section class="note_form">
+        <%= render 'shared/note_form' %>
+      </section>
+    </aside>
+  </div>
+<% end %>
+
+<% unless logged_in? %>
+  <%= link_to "Создать аккаунт!", signup_path, class: "btn btn-lg btn-primary" %>
+<% end %>

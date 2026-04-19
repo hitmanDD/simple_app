@@ -13,8 +13,13 @@ def create
       # Если данные неверны — показываем ошбку
       flash.now[:danger] = 'Неверный email или пароль'
       render 'new', status: :unprocessable_entity
-  end
+    end
 
+end
+
+def destroy
+  log_out # Этот метод должен быть в SessionsHelper
+  redirect_to root_url, status: :see_other
 end
 
 end
