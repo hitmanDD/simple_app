@@ -10,12 +10,13 @@
 <p>Учебное приложение на Ruby on Rails 7. По мотивам руководства Майкла Хартла.</p>
 
 <% if logged_in? %>
-<%= render 'shared/user_info' %>
   <div class="row">
     <aside class="col-md-4">
       <section class="user_info">
+        <%# Оставили render только здесь, внутри секции %>
         <%= render 'shared/user_info' %>
       </section>
+      
       <section class="note_form">
         <%= render 'shared/note_form' %>
       </section>

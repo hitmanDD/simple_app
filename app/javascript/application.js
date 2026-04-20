@@ -7,4 +7,4 @@ document.addEventListener("turbo:load", () => {
   dropdownElementList.forEach(dropdownToggleEl => {
     new bootstrap.Dropdown(dropdownToggleEl)
   })
-})
+})import * as bootstrap from "bootstrap"
