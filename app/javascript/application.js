@@ -1,10 +1,13 @@
 import "@hotwired/turbo-rails"
-import "@popperjs/core" // Исправленное имя
-import * as bootstrap from "bootstrap" // Импортируем всё как объект bootstrap
+import "./controllers"
+
+// Импортируем поппер и бутстрап так, чтобы не было ворнингов
+import * as bootstrap from "bootstrap"
+window.bootstrap = bootstrap // Это полезно для отладки в консоли браузера
 
 document.addEventListener("turbo:load", () => {
   const dropdownElementList = document.querySelectorAll('.dropdown-toggle')
   dropdownElementList.forEach(dropdownToggleEl => {
     new bootstrap.Dropdown(dropdownToggleEl)
   })
-})import * as bootstrap from "bootstrap"
+})

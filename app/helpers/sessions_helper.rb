@@ -16,4 +16,15 @@ module SessionsHelper
   def logged_in?
     !current_user.nil?
   end
+  # Добавляем этот метод для выхода:
+  def log_out
+    forget(current_user) # Если будешь делать "запомнить меня", пригодится
+    reset_session
+    @current_user = nil
+  end
+  
+  # Пока просто заглушка для forget, если метода еще нет
+  def forget(user)
+    # Здесь позже будет удаление cookies
+  end
 end
