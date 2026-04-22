@@ -27,4 +27,17 @@ module SessionsHelper
   def forget(user)
     # Здесь позже будет удаление cookies
   end
+
+  # Перенаправляет к сохраненному адресу или по умолчанию
+  def redirect_back_or(default)
+  redirect_to(session[:forwarding_url] || default, status: :see_other)
+  session.delete(:forwarding_url)
+  end
+
+  # Запоминает URL, по которому пытались перейти
+  def store_location
+  session[:forwarding_url] = request.original_url if request.get?
+  end
+  
 end
+  

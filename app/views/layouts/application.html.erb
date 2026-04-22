@@ -17,8 +17,8 @@
       <nav class="d-flex justify-content-end mb-4">
         <% if logged_in? %>
           <span class="me-3 mt-2 text-muted">Вы вошли как <strong><%= current_user.name %></strong></span>
-          <%# Используем button_to вместо link_to — это создаст мини-форму, которая отправит DELETE запрос без помощи JS %>
-<%= button_to "Выйти", logout_path, method: :delete, class: "btn btn-outline-danger btn-sm" %>
+        <%# Используем button_to вместо link_to — это создаст мини-форму, которая отправит DELETE запрос без помощи JS %>
+        <%= button_to "Выйти", logout_path, method: :delete, class: "btn btn-outline-danger btn-sm" %>
         <% else %>
           <%= link_to "Войти", login_path, class: "btn btn-primary btn-sm" %>
         <% end %>
