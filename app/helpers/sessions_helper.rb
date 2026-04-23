@@ -12,6 +12,11 @@ module SessionsHelper
     end
   end
 
+  # Возвращает true, если переданный пользователь является текущим
+  def current_user?(user)
+    user && user == current_user
+  end
+
   # Возвращает true, если пользователь залогинен, иначе false
   def logged_in?
     !current_user.nil?

@@ -2,22 +2,31 @@
 <h1>All users</h1>
 
 <div class="pagination justify-content-center">
-  <%# ДОБАВИЛИ @users СЮДА %>
-  <%= will_paginate @users %>
+<%= will_paginate @users %>
 </div>
 
 <ul class="users list-group mb-3">
-  <% @users.each do |user| %>
-    <li class="list-group-item d-flex align-items-center">
-      <%= gravatar_for user, size: 50 %>
-      <span class="ms-3">
+<% @users.each do |user| %>
+    <li class="list-group-item d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center">
+        <%= gravatar_for user, size: 50 %>
+        <span class="ms-3">
         <%= link_to user.name, user %>
-      </span>
+        </span>
+    </div>
+
+    <%# КНОПКА АДМИНА %>
+    <% if current_user.admin? && !current_user?(user) %>
+<%= button_to "delete", user, 
+                method: :delete, 
+                onclick: "return confirm('You sure?')",
+                class: "btn btn-link text-danger p-0 m-0", 
+                style: "text-decoration: none; border: none; background: none;" %>
+<% end %>
     </li>
-  <% end %>
-</ul>
+<% end %> <%# ЭТОТ END ЗАКРЫВАЕТ ЦИКЛ %>
+</ul> <%# ЭТОТ ТЕГ ЗАКРЫВАЕТ СПИСОК %>
 
 <div class="pagination justify-content-center">
-  <%# И СЮДА %>
-  <%= will_paginate @users %>
+<%= will_paginate @users %>
 </div>
