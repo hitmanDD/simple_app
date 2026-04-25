@@ -25,13 +25,14 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = User.new(user_params) 
+    @user = User.new(user_params)
     if @user.save
-      log_in @user # Сразу логиним после регистрации (по Хартлу)
-      flash[:success] = "Welcome to the Sample App!" # Добавляем это сообщение
-      redirect_to @user 
+      # Мы убираем log_in @user, так как юзер должен сначала активировать почту
+      UserMailer.account_activation(@user).deliver_now
+      flash[:info] = "Please check your email to activate your account."
+      redirect_to root_url
     else
-      render 'new', status: :unprocessable_entity 
+      render 'new', status: :unprocessable_entity
     end
   end
 
