@@ -42,6 +42,10 @@ class User < ApplicationRecord
     update_attribute(:activated,    true)
     update_attribute(:activated_at, Time.zone.now)
   end
+  
+  def forget
+    update_attribute(:remember_digest, nil)
+  end
 
   # --- МЕТОДЫ ДЛЯ СБРОСА ПАРОЛЯ ---
 
@@ -66,6 +70,11 @@ class User < ApplicationRecord
     BCrypt::Password.new(digest).is_password?(token)
   end
   
+  # Возвращает true, если срок действия ссылки для сброса пароля истек.
+  def password_reset_expired?
+    reset_sent_at < 2.hours.ago
+  end
+
   private
 
     # Приводим email к нижнему регистру перед сохранением (для уникальности)
