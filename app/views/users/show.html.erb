@@ -1,25 +1,49 @@
-<h1>Профиль пользователя</h1>
-<p>Имя: <%= @user.name %></p>
-<p>Email: <%= @user.email %></p>
+<% provide(:title, @user.name) %>
+<div class="row">
+  <!-- Левая колонка: Информация о пользователе и формы -->
+  <aside class="col-md-4">
+    <section class="user_info">
+      <h1>Профиль пользователя</h1>
+      <p>Имя: <%= @user.name %></p>
+      <p>Email: <%= @user.email %></p>
+    </section>
 
-<% if @user == current_user %>
-  <section class="note_form">
-    <%= render 'shared/note_form' %>
-  </section>
-<% end %> <%# Добавил этот закрывающий тег %>
+    <!-- Форма для заметок (показывается только владельцу профиля) -->
+    <% if @user == current_user %>
+      <section class="note_form">
+        <%= render 'shared/note_form' %>
+      </section>
+      
+      <!-- Сюда в будущем мы добавим форму для микросообщений -->
+    <% end %>
+  </aside>
 
-<div class="col-md-8">
-  <% if @user.notes.any? %>
-    <h3>Заметки (<%= @user.notes.count %>)</h3>
-    <ol class="notes">
-      <% @notes.each do |note| %>
-        <li>
-          <span class="content"><%= note.content %></span>
-          <span class="timestamp">
-            Опубликовано <%= time_ago_in_words(note.created_at) %> назад.
-          </span>
-        </li>
-      <% end %>
-    </ol>
-  <% end %>
+  <!-- Правая колонка: Ленты контента -->
+  <div class="col-md-8">
+    
+    <!-- Блок микросообщений (Глава 13) -->
+    <% if @user.microposts.any? %>
+      <h3>Микросообщения (<%= @user.microposts.count %>)</h3>
+      <ol class="microposts">
+        <%= render @microposts %>
+      </ol>
+      <%= will_paginate @microposts %>
+    <% end %>
+
+    <!-- Блок твоих заметок (если они есть) -->
+    <% if @user.notes.any? %>
+      <hr> <!-- Разделительная линия между типами контента -->
+      <h3>Заметки (<%= @user.notes.count %>)</h3>
+      <ol class="notes">
+        <% @notes.each do |note| %>
+          <li>
+            <span class="content"><%= note.content %></span>
+            <span class="timestamp">
+              Опубликовано <%= time_ago_in_words(note.created_at) %> назад.
+            </span>
+          </li>
+        <% end %>
+      </ol>
+    <% end %>
+  </div>
 </div>

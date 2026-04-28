@@ -1,0 +1,13 @@
+<li id="micropost-<%= micropost.id %>">
+  <span class="content"><%= micropost.content %></span>
+  <span class="timestamp">
+    Опубликовано <%= time_ago_in_words(micropost.created_at) %> назад.
+
+    <% if current_user == micropost.user %>
+      <%# button_to создает маленькую форму, которая точно отправит DELETE запрос %>
+      | <%= button_to "delete", micropost, method: :delete, 
+                      data: { confirm: "Вы уверены?" },
+                      class: "delete-btn" %>
+    <% end %>
+  </span>
+</li>

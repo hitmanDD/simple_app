@@ -1,25 +1,123 @@
+/* Подключение внешних библиотек (Bootstrap и иконки) из папки node_modules */
 @import "../../../node_modules/bootstrap/scss/bootstrap";
 @import "../../../node_modules/bootstrap-icons/font/bootstrap-icons";
 
+/* Основные настройки страницы */
 body {
     background-color: #a3c1ad !important;
-    
+    /* Кастомный цвет фона */
 }
 
-@import 'bootstrap-icons/font/bootstrap-icons';
-
+/* Стили для поля "Биография" в профиле */
 .custom-bio-area {
     border: 2px solid #3498db;
     border-radius: 8px;
     min-height: 100px;
     transition: 0.3s;
     margin-bottom: 15px;
-    /* Добавим отступ снизу */
 
+    /* Эффект при клике на поле (фокус) */
     &:focus {
         border-color: #2ecc71;
         box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
         outline: none;
-        /* Уберем стандартный контур браузера */
+    }
+}
+
+/* --- ГЛАВА 13: СТИЛИ ДЛЯ МИКРОСООБЩЕНИЙ --- */
+
+.microposts {
+    list-style: decimal;
+    /* Включаем нумерацию (1, 2, 3...) */
+    padding-left: 30px;
+    /* Отступ слева, чтобы цифры не вылезали за край */
+    margin-top: 20px;
+
+    li {
+        padding: 10px 0;
+        /* Отступы между сообщениями */
+        border-top: 1px solid #e8e8e8;
+        /* Разделительная линия сверху сообщения */
+        display: list-item;
+        /* Обязательно для корректного отображения номера списка */
+    }
+
+    .content {
+        display: block;
+        /* Текст сообщения занимает отдельную строку */
+        font-size: 1.1em;
+        /* Чуть увеличиваем шрифт текста */
+    }
+
+    .timestamp {
+        color: #555;
+        /* Серый цвет для даты и времени */
+        display: block;
+        /* Время отображается под текстом сообщения */
+        font-size: 0.8em;
+        /* Уменьшенный шрифт для служебной информации */
+    }
+}
+
+/* Стилизация кнопки удаления, чтобы она выглядела как ссылка */
+.delete-btn {
+    display: inline;
+    /* В одну строку с текстом */
+    background: none;
+    /* Прозрачный фон */
+    border: none;
+    /* Без рамок */
+    color: #d9534f;
+    /* Красный цвет (стандартный для опасных действий) */
+    padding: 0;
+    cursor: pointer;
+    /* Курсор-рука при наведении */
+    font-size: inherit;
+    /* Размер шрифта как у окружающего текста */
+    text-decoration: none;
+    /* Без подчеркивания по умолчанию */
+
+    &:hover {
+        text-decoration: underline;
+        /* Подчеркивание только при наведении */
+    }
+}
+
+/* Фикс для кнопки button_to: заставляем форму не разрывать строку */
+form.button_to {
+    display: inline;
+}
+
+/* --- НОВЫЕ СТИЛИ ДЛЯ КНОПКИ И ПОЛЯ ВВОДА --- */
+
+.btn-primary {
+    background-color: #2e7d32 !important;
+    /* Темно-зеленый фон */
+    border-color: #1b5e20 !important;
+    /* Темная рамка */
+    color: #000000 !important;
+    /* Черный текст */
+    font-weight: bold;
+    /* Жирный шрифт */
+
+    &:hover {
+        background-color: #1b5e20 !important;
+        /* Еще темнее при наведении */
+        color: #ffffff !important;
+        /* Белый текст при наведении */
+    }
+}
+
+textarea {
+    width: 100%;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 10px;
+
+    &:focus {
+        border-color: #2e7d32;
+        /* Зеленая рамка при фокусе */
+        outline: none;
     }
 }
