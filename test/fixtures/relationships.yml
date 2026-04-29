@@ -1,0 +1,19 @@
+# Связь 1: 
+one:
+  follower: Lion
+  followed: Vasya
+
+# Связь 2: 
+two:
+  follower: Lion
+  followed: Lola
+
+# Связь 3: 
+three:
+  follower: Lola
+  followed: Lion
+
+# Связь 4: 
+four:
+  follower: Vasya
+  followed: Lion

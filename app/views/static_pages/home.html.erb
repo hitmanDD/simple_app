@@ -1,5 +1,7 @@
-<%= provide(:title, "Home") %>
+<%# Устанавливаем заголовок страницы %>
+<% provide(:title, "Home") %>
 
+<%# Если пользователь залогинен, показываем приветственное уведомление %>
 <% if logged_in? %>
   <div class="alert alert-success">
     Вы вошли как <%= current_user.name %>!
@@ -9,21 +11,36 @@
 <h1>Добро пожаловать</h1>
 <p>Учебное приложение на Ruby on Rails 7. По мотивам руководства Майкла Хартла.</p>
 
+<%# Основной блок для авторизованных пользователей %>
 <% if logged_in? %>
   <div class="row">
     <aside class="col-md-4">
+      <%# Секция 1: Краткая инфа о юзере (аватар и имя) %>
       <section class="user_info">
-        <%# Оставили render только здесь, внутри секции %>
         <%= render 'shared/user_info' %>
       </section>
       
+      <%# ГЛАВА 14: Секция статистики (подписки и подписчики) %>
+      <%# Мы вынесли это в shared, чтобы использовать и в профиле, и тут %>
+      <section class="stats">
+        <%= render 'shared/stats' %>
+      </section>
+
+      <%# Форма для создания заметок (наша кастомная фича) %>
       <section class="note_form">
         <%= render 'shared/note_form' %>
       </section>
     </aside>
+    
+    <%# Здесь позже появится лента сообщений (Глава 14.3) %>
+    <div class="col-md-8">
+      <h3>Лента сообщений</h3>
+      <%# <%= render 'shared/feed' %> <%# Пока закомментировано, добавим скоро %>
+    </div>
   </div>
 <% end %>
 
+<%# Если пользователь НЕ залогинен, показываем кнопку регистрации %>
 <% unless logged_in? %>
   <%= link_to "Создать аккаунт!", signup_path, class: "btn btn-lg btn-primary" %>
 <% end %>

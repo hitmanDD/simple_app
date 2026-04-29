@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
-  # Защита: проверка входа перед важными действиями
-  before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
+  # Защита: добавили :following и :followers в список действий, требующих входа
+  before_action :logged_in_user, only: [:index, :edit, :update, :destroy,
+                                        :following, :followers]
   # Проверка прав администратора для удаления
   before_action :admin_user,     only: :destroy
 
@@ -22,6 +23,22 @@ class UsersController < ApplicationController
       @note = current_user.notes.build 
       @micropost = current_user.microposts.build # Для будущей формы постов
     end
+  end
+
+  # ГЛАВА 14: Страница со списком тех, на кого подписан пользователь
+  def following
+    @title = "Following"
+    @user  = User.find(params[:id])
+    @users = @user.following.paginate(page: params[:page])
+    render 'show_follow' # Используем общий шаблон для списков
+  end
+
+  # ГЛАВА 14: Страница со списком подписчиков пользователя
+  def followers
+    @title = "Followers"
+    @user  = User.find(params[:id])
+    @users = @user.followers.paginate(page: params[:page])
+    render 'show_follow' # Используем тот же общий шаблон
   end
 
   def new

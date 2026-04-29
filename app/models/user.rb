@@ -19,8 +19,22 @@ class User < ApplicationRecord
   # Заметки пользователя
   has_many :notes, dependent: :destroy
   # Микросообщения пользователя (Глава 13)
-  # dependent: :destroy гарантирует удаление постов при удалении аккаунта
   has_many :microposts, dependent: :destroy
+
+  # --- ГЛАВА 14: СВЯЗИ ДЛЯ ПОДПИСОК (Following/Followers) ---
+  # Активные связи (на кого подписан текущий юзер)
+  has_many :active_relationships, class_name:  "Relationship",
+                                  foreign_key: "follower_id",
+                                  dependent:   :destroy
+  # Список тех, на кого подписан юзер (через активные связи)
+  has_many :following, through: :active_relationships, source: :followed
+
+  # Пассивные связи (кто подписан на текущего юзера)
+  has_many :passive_relationships, class_name:  "Relationship",
+                                   foreign_key: "followed_id",
+                                   dependent:   :destroy
+  # Список подписчиков (через пассивные связи)
+  has_many :followers, through: :passive_relationships, source: :follower
 
   # Пароли и их валидация
   has_secure_password
@@ -53,40 +67,51 @@ class User < ApplicationRecord
     update_attribute(:remember_digest, nil)
   end
 
+  # --- МЕТОДЫ ДЛЯ ПОДПИСОК (Глава 14) ---
+
+  # Подписаться на пользователя
+  def follow(other_user)
+    following << other_user unless self == other_user
+  end
+
+  # Отписаться от пользователя
+  def unfollow(other_user)
+    following.delete(other_user)
+  end
+
+  # Проверка: подписан ли я на этого пользователя?
+  def following?(other_user)
+    following.include?(other_user)
+  end
+
   # --- МЕТОДЫ ДЛЯ СБРОСА ПАРОЛЯ ---
 
-  # Создает токен сброса и записывает время отправки
   def create_reset_digest
     self.reset_token = User.new_token
     update_columns(reset_digest:  User.digest(reset_token), 
                    reset_sent_at: Time.zone.now)
   end
 
-  # Отправляет письмо для сброса пароля
   def send_password_reset_email
     UserMailer.password_reset(self).deliver_now
   end
 
-  # Проверяет соответствие токена дайджесту (универсальный метод)
   def authenticated?(attribute, token)
     digest = send("#{attribute}_digest")
     return false if digest.nil?
     BCrypt::Password.new(digest).is_password?(token)
   end
   
-  # Проверяет, не протухла ли ссылка (2 часа)
   def password_reset_expired?
     reset_sent_at < 2.hours.ago
   end
 
   private
 
-    # Переводит email в нижний регистр
     def downcase_email
       self.email = email.downcase
     end
 
-    # Создает токен и дайджест активации
     def create_activation_digest
       self.activation_token  = User.new_token
       self.activation_digest = User.digest(activation_token)

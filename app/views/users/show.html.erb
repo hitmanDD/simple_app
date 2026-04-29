@@ -6,6 +6,7 @@
       <h1>Профиль пользователя</h1>
       <p>Имя: <%= @user.name %></p>
       <p>Email: <%= @user.email %></p>
+      <%= render 'follow_form' if logged_in? %>
     </section>
 
     <!-- Форма для заметок (показывается только владельцу профиля) -->
@@ -15,6 +16,10 @@
       </section>
       
       <!-- Сюда в будущем мы добавим форму для микросообщений -->
+    
+      <section class="stats">
+        <%= render 'shared/stats' %>
+      </section>
     <% end %>
   </aside>
 
