@@ -1,0 +1,20 @@
+Lion:
+  name: Lion
+  email: lion@mail.com
+  password_digest: <%= User.digest('password') %>
+  activated: true
+  activated_at: <%= Time.zone.now %>
+
+Vasya:
+  name: Vasya
+  email: vasya@so.com
+  password_digest: <%= User.digest('password') %>
+  activated: true
+  activated_at: <%= Time.zone.now %>
+
+Lola:
+  name: Lola
+  email: lola@lola.com
+  password_digest: <%= User.digest('password') %>
+  activated: true
+  activated_at: <%= Time.zone.now %>
