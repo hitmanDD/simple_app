@@ -1,0 +1,11 @@
+<%# Заменяем форму отписки на форму подписки %>
+<%= turbo_stream.replace "follow_form" do %>
+  <%= render "users/follow" %>
+<% end %>
+
+<%# Обновляем счетчик подписчиков в сайдбаре %>
+<%= turbo_stream.replace "followers" do %>
+  <strong id="followers" class="stat">
+    <%= @user.followers.count %>
+  </strong>
+<% end %>

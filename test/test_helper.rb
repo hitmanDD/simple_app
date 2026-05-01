@@ -9,5 +9,25 @@ class ActiveSupport::TestCase
   # Подключает все фикстуры (тестовые данные) из test/fixtures/*.yml
   fixtures :all
 
-  # Здесь можно добавлять свои хелперы для тестов
+  # --- НАШИ ХЕЛПЕРЫ ДЛЯ ТЕСТОВ ---
+
+  # Возвращает true, если тестовый пользователь вошел в систему
+  def is_logged_in?
+    !session[:user_id].nil?
+  end
+
+  # Осуществляет вход под тестовым пользователем
+  def log_in_as(user)
+    session[:user_id] = user.id
+  end
+end
+
+# Этот кусок нужен для интеграционных тестов (в папке integration)
+class ActionDispatch::IntegrationTest
+  # Входим в систему внутри интеграционного теста
+  def log_in_as(user, password: 'password', remember_me: '1')
+    post login_path, params: { session: { email: user.email,
+                                          password: password,
+                                          remember_me: remember_me } }
+  end
 end
