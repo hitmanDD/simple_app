@@ -74,3 +74,5 @@ end
   gem 'will_paginate'
   #Закоментировал видимо конфликтуют с выше гемом
   #gem 'bootstrap-will_paginate' 
+  
+  gem 'sassc-rails'

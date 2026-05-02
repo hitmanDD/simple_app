@@ -1,14 +1,14 @@
-/* Подключение внешних библиотек (Bootstrap и иконки) из папки node_modules */
+/* Подключение внешних библиотек (Bootstrap и иконки) */
 @import "../../../node_modules/bootstrap/scss/bootstrap";
 @import "../../../node_modules/bootstrap-icons/font/bootstrap-icons";
 
 /* Основные настройки страницы */
 body {
     background-color: #a3c1ad !important;
-    /* Кастомный цвет фона */
+    /* Фон */
 }
 
-/* Стили для поля "Биография" в профиле */
+/* Стили для поля "Биография" */
 .custom-bio-area {
     border: 2px solid #3498db;
     border-radius: 8px;
@@ -16,7 +16,6 @@ body {
     transition: 0.3s;
     margin-bottom: 15px;
 
-    /* Эффект при клике на поле (фокус) */
     &:focus {
         border-color: #2ecc71;
         box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
@@ -24,90 +23,48 @@ body {
     }
 }
 
-/* --- ГЛАВА 13: СТИЛИ ДЛЯ МИКРОСООБЩЕНИЙ --- */
-
+/* --- ГЛАВА 13: МИКРОСООБЩЕНИЯ --- */
 .microposts {
     list-style: decimal;
-    /* Включаем нумерацию (1, 2, 3...) */
     padding-left: 30px;
-    /* Отступ слева, чтобы цифры не вылезали за край */
     margin-top: 20px;
 
     li {
         padding: 10px 0;
-        /* Отступы между сообщениями */
         border-top: 1px solid #e8e8e8;
-        /* Разделительная линия сверху сообщения */
         display: list-item;
-        /* Обязательно для корректного отображения номера списка */
     }
 
     .content {
         display: block;
-        /* Текст сообщения занимает отдельную строку */
         font-size: 1.1em;
-        /* Чуть увеличиваем шрифт текста */
     }
 
     .timestamp {
         color: #555;
-        /* Серый цвет для даты и времени */
         display: block;
-        /* Время отображается под текстом сообщения */
         font-size: 0.8em;
-        /* Уменьшенный шрифт для служебной информации */
     }
 }
 
-/* Стилизация кнопки удаления, чтобы она выглядела как ссылка */
 .delete-btn {
     display: inline;
-    /* В одну строку с текстом */
     background: none;
-    /* Прозрачный фон */
     border: none;
-    /* Без рамок */
     color: #d9534f;
-    /* Красный цвет (стандартный для опасных действий) */
     padding: 0;
     cursor: pointer;
-    /* Курсор-рука при наведении */
     font-size: inherit;
-    /* Размер шрифта как у окружающего текста */
     text-decoration: none;
-    /* Без подчеркивания по умолчанию */
 
     &:hover {
         text-decoration: underline;
-        /* Подчеркивание только при наведении */
     }
 }
 
-/* Фикс для кнопки button_to: заставляем форму не разрывать строку */
-form.button_to {
-    display: inline;
-}
+/* --- ГЛАВА 14: КНОПКИ И ФОРМЫ --- */
 
-/* --- НОВЫЕ СТИЛИ ДЛЯ КНОПКИ И ПОЛЯ ВВОДА --- */
-
-.btn-primary {
-    background-color: #2e7d32 !important;
-    /* Темно-зеленый фон */
-    border-color: #1b5e20 !important;
-    /* Темная рамка */
-    color: #000000 !important;
-    /* Черный текст */
-    font-weight: bold;
-    /* Жирный шрифт */
-
-    &:hover {
-        background-color: #1b5e20 !important;
-        /* Еще темнее при наведении */
-        color: #ffffff !important;
-        /* Белый текст при наведении */
-    }
-}
-
+/* Поле ввода сообщения */
 textarea {
     width: 100%;
     margin-bottom: 10px;
@@ -117,7 +74,41 @@ textarea {
 
     &:focus {
         border-color: #2e7d32;
-        /* Зеленая рамка при фокусе */
         outline: none;
     }
+}
+
+/* Основная кнопка (Follow / Post) */
+.btn-primary {
+    background-color: #2e7d32 !important;
+    border-color: #1b5e20 !important;
+    color: #000000 !important;
+    font-weight: bold;
+
+    &:hover {
+        background-color: #1b5e20 !important;
+        color: #ffffff !important;
+    }
+}
+
+/* Кнопка Unfollow (Контрастная) */
+.btn-unfollow {
+    background-color: #ffffff !important;
+    color: #d9534f !important;
+    border: 1px solid #d9534f !important;
+    font-weight: bold;
+    transition: 0.3s;
+
+    &:hover {
+        background-color: #d9534f !important;
+        color: #ffffff !important;
+        text-decoration: none;
+    }
+}
+
+/* Общие фиксы для форм и Turbo */
+form.button_to,
+.edit_relationship,
+.new_relationship {
+    display: inline-block;
 }
