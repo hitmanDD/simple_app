@@ -84,6 +84,26 @@ class User < ApplicationRecord
     following.include?(other_user)
   end
 
+  # === ЛЕНТА НОВОСТЕЙ (FEED) ДЛЯ ПОЛЬЗОВАТЕЛЯ ===
+
+  # --- НОВЫЙ ВАРИАНТ (Простой SQL-запрос, который мы заменяем) ---
+  # def feed
+  #   Micropost.where("user_id IN (?) OR user_id = ?", following_ids, id)
+  # end
+
+  # --- НОВЫЙ ВАРИАНТ (Оптимизированный SQL-подзапрос) ---
+  def feed
+    # Выбираем ID подписок прямо в базе через подзапрос (Subselect)
+    following_ids_subselect = "SELECT followed_id FROM relationships
+                               WHERE follower_id = :user_id"
+    
+    # Делаем один запрос к БД вместо выгрузки всех ID в память Ruby
+    Micropost.where("user_id IN (#{following_ids_subselect}) OR user_id = :user_id", 
+                    user_id: id)
+             .includes(:user) # Предотвращает проблему N+1 запросов
+             .order(created_at: :desc)
+  end
+
   # --- МЕТОДЫ ДЛЯ СБРОСА ПАРОЛЯ ---
 
   def create_reset_digest
