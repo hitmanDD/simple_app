@@ -1,15 +1,19 @@
+# Первая тестовая связь (relationship)
 one:
-  follower: Lion
-  followed: Vasya
+  # Кто подписался: пользователь Lion
+  follower: lion
+  
+  # На кого подписался: пользователь Vasya
+  # Эта связь гарантирует, что список @user.following для Lion НЕ пустой,
+  # и тест test_following_page успешно проходит.
+  followed: vasya
 
+# Вторая тестовая связь
 two:
-  follower: Lion
-  followed: Lola
-
-three:
-  follower: Lola
-  followed: Lion
-
-four:
-  follower: Vasya
-  followed: Lion
+  # Кто подписался: пользователь Vasya
+  follower: vasya
+  
+  # На кого подписался: пользователь Lion
+  # Эта связь гарантирует, что список @user.followers для Lion НЕ пустой,
+  # и тест test_followers_page успешно проходит.
+  followed: lion

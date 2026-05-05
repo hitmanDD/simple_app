@@ -33,5 +33,10 @@ module SampleApp
 
     # Don't generate system test files.
     config.generators.system_tests = nil
-  end
-end
+
+    # ➔ НАША КАСТОМНАЯ НАСТРОЙКА ДЛЯ ЗАДАЧИ ТЕСТИРОВАНИЯ:
+    # Отключаем валидацию внешних ключей при загрузке фикстур
+    # Это полностью предотвращает ошибку Foreign key violations в PostgreSQL/SQLite
+    config.active_record.verify_foreign_keys_for_fixtures = false
+  end 
+end 

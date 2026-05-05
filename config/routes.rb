@@ -1,8 +1,12 @@
 Rails.application.routes.draw do
+  # Страницы сброса паролей
   get 'password_resets/new'
   get 'password_resets/edit'
+  
+  # Главная страница приложения
   root "static_pages#home"
   
+  # Статические страницы
   get "/help",    to: "static_pages#help"
   get "/about",   to: "static_pages#about"
   get "/contact", to: "static_pages#contact"
@@ -26,10 +30,16 @@ Rails.application.routes.draw do
   # Используем только :create и :destroy
   resources :relationships,       only: [:create, :destroy]
 
+  # Маршруты для заметок (наша кастомная фича)
+  # Разрешаем создание и удаление заметок
   resources :notes,               only: [:create, :destroy]
+  
+  # Маршруты для активации аккаунта
   resources :account_activations, only: [:edit]
+  
+  # Маршруты для сброса пароля
   resources :password_resets,     only: [:new, :create, :edit, :update]
+  
+  # Маршруты для микросообщений (постов)
   resources :microposts,          only: [:create, :destroy]
-  resources :relationships,       only: [:create, :destroy]
-
 end

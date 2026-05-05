@@ -2,19 +2,16 @@
 orange:
   content: "I'm a test note!"
   created_at: <%= 10.minutes.ago %>
-  # Привязываем к пользователю Lion из users.yml
-  user: Lion
+  user: lion # <-- Ссылка на ключ в users.yml
 
-# Самая свежая заметка пользователя Lion для проверки сортировки
+# Заметка для проверки сортировки
 most_recent:
   content: "Writing a fresh note."
   created_at: <%= Time.zone.now %>
-  # Привязываем к пользователю Lion из users.yml
-  user: Lion
+  user: lion # <-- Ссылка на ключ в users.yml
 
 # Тестовая заметка другого пользователя (Vasya)
 archer_note:
   content: "Vasya's secret note."
   created_at: <%= 2.hours.ago %>
-  # Привязываем к пользователю Vasya из users.yml
-  user: Vasya
+  user: vasya # <-- Ссылка на ключ в users.yml

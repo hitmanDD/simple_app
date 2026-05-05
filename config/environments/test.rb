@@ -57,4 +57,13 @@ Rails.application.configure do
 
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
+
+  # ➔ НАШИ КАСТОМНЫЕ НАСТРОЙКИ ДЛЯ ИСПРАВЛЕНИЯ ОШИБКИ "Missing host":
+  # Обязательный хост для генерации ссылок активации в письмах
+  config.action_mailer.default_url_options = { host: 'example.com' }
+  
+  # Безопасная инициализация хоста для маршрутов через метод (чтобы избежать tsort / initializable error)
+  config.before_initialize do
+    Rails.application.routes.default_url_options[:host] = 'example.com'
+  end
 end

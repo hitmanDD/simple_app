@@ -1,19 +1,33 @@
 class NotesController < ApplicationController
-  before_action :logged_in_user # Этот метод нужно взять из книги Хартла
+  # Ограничиваем доступ только для авторизованных пользователей
+  before_action :logged_in_user, only: [:create, :destroy]
 
+  # Создание заметки
   def create
     @note = current_user.notes.build(note_params)
     if @note.save
       flash[:success] = "Заметка создана!"
       redirect_to root_url
     else
-      render 'static_pages/home'
+      @feed_items = current_user.feed.paginate(page: params[:page])
+      render 'static_pages/home', status: :unprocessable_entity
     end
+  end
+
+  # ➔ НАШЕ ИСПРАВЛЕНИЕ: Точный и проверенный метод удаления (destroy) ДО private!
+  def destroy
+    @note = current_user.notes.find_by(id: params[:id])
+    if @note
+      @note.destroy
+      flash[:success] = "Заметка удалена"
+    end
+    redirect_back_or_to root_url
   end
 
   private
 
-  def note_params
-    params.require(:note).permit(:content)
-  end
+    # Разрешенные параметры для заметки
+    def note_params
+      params.require(:note).permit(:content)
+    end
 end
