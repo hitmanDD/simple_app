@@ -15,25 +15,30 @@ class User < ApplicationRecord
                     format: { with: VALID_EMAIL_REGEX },
                     uniqueness: { case_sensitive: false }
   
+  # --- ИСПРАВЛЕННЫЙ БЛОК: ACTIVE STORAGE ДЛЯ АВАТАРОК ---
+  # Привязываем одну аватарку к пользователю
+  has_one_attached :avatar
+
+  # Кастомная валидация вместо неизвестных Rails валидаторов
+  validate :correct_avatar_mime_type_and_size
+
   # --- СВЯЗИ (Associations) ---
   # Заметки пользователя
   has_many :notes, dependent: :destroy
   # Микросообщения пользователя (Глава 13)
   has_many :microposts, dependent: :destroy
+  # Напоминания пользователя (Кастомная фича 2)
+  has_many :reminders, dependent: :destroy
 
   # --- ГЛАВА 14: СВЯЗИ ДЛЯ ПОДПИСОК (Following/Followers) ---
-  # Активные связи (на кого подписан текущий юзер)
   has_many :active_relationships, class_name:  "Relationship",
                                   foreign_key: "follower_id",
                                   dependent:   :destroy
-  # Список тех, на кого подписан юзер (через активные связи)
   has_many :following, through: :active_relationships, source: :followed
 
-  # Пассивные связи (кто подписан на текущего юзера)
   has_many :passive_relationships, class_name:  "Relationship",
                                    foreign_key: "followed_id",
                                    dependent:   :destroy
-  # Список подписчиков (через пассивные связи)
   has_many :followers, through: :passive_relationships, source: :follower
 
   # Пароли и их валидация
@@ -42,65 +47,60 @@ class User < ApplicationRecord
   
   # --- МЕТОДЫ КЛАССА ---
 
-  # Возвращает дайджест (хеш) строки
   def User.digest(string)
     cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
                                                   BCrypt::Engine.cost
     BCrypt::Password.create(string, cost: cost)
   end
 
-  # Возвращает случайный токен
   def User.new_token
     SecureRandom.urlsafe_base64
   end
   
   # --- МЕТОДЫ ОБЪЕКТА ---
 
-  # Активирует аккаунт
+  # ХЕЛПЕР ДЛЯ ОТОБРАЖЕНИЯ АВАТАРКИ
+  def avatar_display(size = 80)
+    if avatar.attached?
+      avatar
+    else
+      gravatar_id = Digest::MD5::hexdigest(email.downcase)
+      "https://gravatar.com{gravatar_id}?s=#{size}&d=identicon"
+    end
+  end
+
   def activate
     update_attribute(:activated,    true)
     update_attribute(:activated_at, Time.zone.now)
   end
   
-  # Забывает пользователя (для выхода из системы)
   def forget
     update_attribute(:remember_digest, nil)
   end
 
-  # --- МЕТОДЫ ДЛЯ ПОДПИСОК (Глава 14) ---
+  # --- МЕТОДЫ ДЛЯ ПОДПИСОК ---
 
-  # Подписаться на пользователя
   def follow(other_user)
     following << other_user unless self == other_user
   end
 
-  # Отписаться от пользователя
   def unfollow(other_user)
     following.delete(other_user)
   end
 
-  # Проверка: подписан ли я на этого пользователя?
   def following?(other_user)
     following.include?(other_user)
   end
 
-  # === ЛЕНТА НОВОСТЕЙ (FEED) ДЛЯ ПОЛЬЗОВАТЕЛЯ ===
+  # === ЛЕНТА НОВОСТЕЙ ===
 
-  # --- НОВЫЙ ВАРИАНТ (Простой SQL-запрос, который мы заменяем) ---
-  # def feed
-  #   Micropost.where("user_id IN (?) OR user_id = ?", following_ids, id)
-  # end
-
-  # --- НОВЫЙ ВАРИАНТ (Оптимизированный SQL-подзапрос) ---
   def feed
-    # Выбираем ID подписок прямо в базе через подзапрос (Subselect)
     following_ids_subselect = "SELECT followed_id FROM relationships
                                WHERE follower_id = :user_id"
     
-    # Делаем один запрос к БД вместо выгрузки всех ID в память Ruby
     Micropost.where("user_id IN (#{following_ids_subselect}) OR user_id = :user_id", 
                     user_id: id)
-             .includes(:user) # Предотвращает проблему N+1 запросов
+             .includes(:user)
              .order(created_at: :desc)
   end
 
@@ -135,5 +135,21 @@ class User < ApplicationRecord
     def create_activation_digest
       self.activation_token  = User.new_token
       self.activation_digest = User.digest(activation_token)
+    end
+
+    # --- НОВЫЙ МЕТОД: КАСТОМНАЯ ВАЛИДАЦИЯ АВАТАРКИ ---
+    def correct_avatar_mime_type_and_size
+      if avatar.attached?
+        # Проверяем размер файла (должен быть меньше 5 МБ)
+        if avatar.blob.byte_size > 5.megabytes
+          errors.add(:avatar, "должен быть меньше 5 МБ")
+        end
+
+        # Проверяем формат файла
+        acceptable_types = ["image/jpeg", "image/gif", "image/png"]
+        unless acceptable_types.include?(avatar.content_type)
+          errors.add(:avatar, "должен быть корректным форматом изображения")
+        end
+      end
     end
 end

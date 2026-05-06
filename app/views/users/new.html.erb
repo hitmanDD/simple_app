@@ -3,7 +3,10 @@
 
 <div class="row">
   <div class="col-md-6 col-md-offset-3">
+    <%# form_with автоматически обрабатывает загрузку файлов в Rails 7 %>
     <%= form_with(model: @user, local: true) do |f| %>
+      <%= render 'shared/error_messages', object: f.object if defined?(f.object) %>
+
       <%= f.label :name %>
       <%= f.text_field :name, class: 'form-control' %>
 
@@ -20,6 +23,15 @@
 
       <%= f.label :bio, "Расскажите о себе" %>
       <%= f.text_area :bio, class: 'form-control custom-bio-area', placeholder: "Напишите пару слов о себе..." %>
+
+      <%# --- НОВЫЙ БЛОК: ПОЛЕ ЗАГРУЗКИ АВАТАРКИ --- %>
+      <%# Этот блок позволяет пользователю выбрать файл изображения на своем компьютере %>
+      <div class="avatar-upload-section" style="margin: 15px 0;">
+        <%= f.label :avatar, "Загрузить аватарку" %>
+        <%# accept ограничивает выбор файлов только форматами картинок (jpeg, gif, png) %>
+        <%= f.file_field :avatar, accept: "image/jpeg,image/gif,image/png", class: 'form-control' %>
+      </div>
+
       <%= f.submit "Создать мой аккаунт", class: "btn btn-primary" %>
 
     <% end %>

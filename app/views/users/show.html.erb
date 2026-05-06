@@ -3,21 +3,34 @@
   <!-- Левая колонка: Информация о пользователе и формы -->
   <aside class="col-md-4">
     <section class="user_info">
-      <h1>Профиль пользователя</h1>
-      <p>Имя: <%= @user.name %></p>
-      <p>Email: <%= @user.email %></p>
+      <%# --- БЛОК АВАТАРКИ --- %>
+      <%# Выносим картинку в отдельный контейнер над именем, чтобы текст не "наползал" %>
+      <div class="profile-avatar-container" style="margin-bottom: 15px;">
+        <%# Используем наш хелпер: покажет черный квадрат (150px) или Gravatar %>
+        <%= image_tag @user.avatar_display(150), alt: @user.name, class: "user-avatar-large" %>
+      </div>
+      
+      <h1><%= @user.name %></h1>
+      <p><strong>Email:</strong> <%= @user.email %></p>
+
+      <%# Ссылка на редактирование профиля (только для владельца) %>
+      <%# Это и есть наша "кнопка" для перехода к загрузчику %>
+      <% if @user == current_user %>
+        <div style="margin-bottom: 20px;">
+          <%= link_to "Изменить фото / Настройки", edit_user_path(@user), class: "btn btn-sm btn-default" %>
+        </div>
+      <% end %>
+
       <%= render 'follow_form' if logged_in? %>
     </section>
 
     <!-- Форма для заметок (показывается только владельцу профиля) -->
     <% if @user == current_user %>
-      <section class="note_form">
+      <section class="note_form" style="margin-top: 20px;">
         <%= render 'shared/note_form' %>
       </section>
       
-      <!-- Сюда в будущем мы добавим форму для микросообщений -->
-    
-      <section class="stats">
+      <section class="stats" style="margin-top: 20px;">
         <%= render 'shared/stats' %>
       </section>
     <% end %>

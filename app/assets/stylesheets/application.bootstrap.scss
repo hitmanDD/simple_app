@@ -1,11 +1,11 @@
-/* Подключение внешних библиотек (Bootstrap и иконки) */
+/* --- ПОДКЛЮЧЕНИЕ БИБЛИОТЕК (Исправленные пути для WSL) --- */
 @import "../../../node_modules/bootstrap/scss/bootstrap";
 @import "../../../node_modules/bootstrap-icons/font/bootstrap-icons";
 
-/* Основные настройки страницы */
+/* --- ТВОИ НАСТРОЙКИ (ОСНОВНЫЕ) --- */
 body {
     background-color: #a3c1ad !important;
-    /* Фон */
+    /* Твой фирменный фон */
 }
 
 /* Стили для поля "Биография" */
@@ -13,8 +13,8 @@ body {
     border: 2px solid #3498db;
     border-radius: 8px;
     min-height: 100px;
-    transition: 0.3s;
     margin-bottom: 15px;
+    transition: 0.3s;
 
     &:focus {
         border-color: #2ecc71;
@@ -47,38 +47,7 @@ body {
     }
 }
 
-.delete-btn {
-    display: inline;
-    background: none;
-    border: none;
-    color: #d9534f;
-    padding: 0;
-    cursor: pointer;
-    font-size: inherit;
-    text-decoration: none;
-
-    &:hover {
-        text-decoration: underline;
-    }
-}
-
-/* --- ГЛАВА 14: КНОПКИ И ФОРМЫ --- */
-
-/* Поле ввода сообщения */
-textarea {
-    width: 100%;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    padding: 10px;
-
-    &:focus {
-        border-color: #2e7d32;
-        outline: none;
-    }
-}
-
-/* Основная кнопка (Follow / Post) */
+/* --- ГЛАВА 14: КНОПКИ --- */
 .btn-primary {
     background-color: #2e7d32 !important;
     border-color: #1b5e20 !important;
@@ -91,22 +60,24 @@ textarea {
     }
 }
 
-/* Кнопка Unfollow (Контрастная) */
-.btn-unfollow {
-    background-color: #ffffff !important;
-    color: #d9534f !important;
-    border: 1px solid #d9534f !important;
-    font-weight: bold;
-    transition: 0.3s;
-
-    &:hover {
-        background-color: #d9534f !important;
-        color: #ffffff !important;
-        text-decoration: none;
-    }
+/* --- НОВЫЙ БЛОК: СТИЛИ ДЛЯ АВАТАРОК --- */
+/* Белая рамка, чтобы черный квадрат не сливался с фоном */
+.user-avatar-large {
+    border: 5px solid #ffffff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    background-color: #ffffff;
+    display: block;
+    margin-bottom: 10px;
 }
 
-/* Общие фиксы для форм и Turbo */
+.profile-avatar-container {
+    display: inline-block;
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+/* Фиксы для форм */
 form.button_to,
 .edit_relationship,
 .new_relationship {

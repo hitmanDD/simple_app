@@ -1,0 +1,54 @@
+<% provide(:title, "Настройки профиля") %>
+<h1>Обновите ваш профиль</h1>
+
+<div class="row">
+  <aside class="col-md-4">
+    <section class="user_info">
+      <%# Показываем текущую аватарку в сайдбаре настроек %>
+      <div class="profile-avatar-container" style="margin-bottom: 15px;">
+        <%= image_tag @user.avatar_display(150), alt: @user.name, class: "user-avatar-large" %>
+      </div>
+      <h1><%= @user.name %></h1>
+      <span><%= link_to "view my profile", @user %></span>
+    </section>
+    
+    <section class="stats">
+      <%= render 'shared/stats' %>
+    </section>
+  </aside>
+
+  <div class="col-md-8">
+    <%# Форма редактирования данных %>
+    <%= form_with(model: @user, local: true) do |f| %>
+      <%= render 'shared/error_messages', object: f.object %>
+
+      <%= f.label :name, "Имя" %>
+      <%= f.text_field :name, class: 'form-control' %>
+
+      <%= f.label :email, "Email" %>
+      <%= f.email_field :email, class: 'form-control' %>
+
+      <%= f.label :bio, "О себе" %>
+      <%= f.text_area :bio, class: 'form-control' %>
+
+      <%= f.label :password, "Новый пароль (оставьте пустым, если не меняете)" %>
+      <%= f.password_field :password, class: 'form-control' %>
+
+      <%= f.label :password_confirmation, "Подтверждение нового пароля" %>
+      <%= f.password_field :password_confirmation, class: 'form-control' %>
+
+      <%# --- НАШ ЗАГРУЗЧИК --- %>
+      <div class="avatar-upload-section" style="margin: 20px 0; padding: 15px; border: 1px dashed #007bff; border-radius: 5px; background-color: #f8f9fa;">
+        <%= f.label :avatar, "📸 Сменить аватарку (выберите черный квадрат)" %>
+        <%= f.file_field :avatar, accept: "image/jpeg,image/gif,image/png", class: 'form-control' %>
+        <p class="help-block" style="font-size: 0.8em; color: #666;">Допустимые форматы: PNG, JPG, GIF. Макс. 5 МБ.</p>
+      </div>
+
+      <%= f.submit "Сохранить изменения", class: "btn btn-primary" %>
+    <% end %>
+
+    <div class="gravatar_edit" style="margin-top: 20px;">
+      <a href="https://gravatar.com" target="_blank" rel="noopener">Изменить на Gravatar</a>
+    </div>
+  </div>
+</div>

@@ -36,6 +36,11 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
+  # --- НАША ПРАВКА ДЛЯ АВАТАРОК ---
+  # Отключаем обработку (ресайз) картинок, чтобы Rails не искал библиотеку libvips или ImageMagick.
+  # Теперь аватарки будут просто храниться и отображаться "как есть", что идеально для WSL2.
+  config.active_storage.variant_processor = nil
+
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
 
@@ -69,7 +74,8 @@ Rails.application.configure do
   
   # config.action_cable.disable_request_forgery_protection = true
   config.action_mailer.raise_delivery_errors = true
-  #config.action_mailer.delivery_method = :letter_opener заменили на  так как Rails запущен внутри терминала (где нет графического браузера), библиотека выдает ошибку.ВСЛ..
+  
+  #config.action_mailer.delivery_method = :letter_opener заменили на так как Rails запущен внутри терминала (где нет графического браузера), библиотека выдает ошибку.ВСЛ..
   config.action_mailer.delivery_method = :test
   config.action_mailer.perform_deliveries = true
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 } 

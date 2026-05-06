@@ -25,6 +25,25 @@ class UsersController < ApplicationController
     end
   end
 
+  # --- НОВЫЕ МЕТОДЫ: РЕДАКТИРОВАНИЕ И ОБНОВЛЕНИЕ ---
+
+  # Показываем форму редактирования профиля (настройки)
+  def edit
+    @user = User.find(params[:id])
+  end
+
+  # Сохраняем изменения профиля (включая аватарку)
+  def update
+    @user = User.find(params[:id])
+    if @user.update(user_params)
+      flash[:success] = "Профиль обновлен!"
+      redirect_to @user
+    else
+      # Если валидация не прошла, возвращаем форму редактирования
+      render 'edit', status: :unprocessable_entity
+    end
+  end
+
   # ГЛАВА 14: Страница со списком тех, на кого подписан пользователь
   def following
     @title = "Following"
@@ -68,8 +87,9 @@ class UsersController < ApplicationController
 
     # Строгие параметры (Strong Parameters)
     def user_params
+      # Параметр :avatar разрешен для безопасного приема файлов
       params.require(:user).permit(:name, :email, :password,
-                                   :password_confirmation, :bio )
+                                   :password_confirmation, :bio, :avatar)
     end
 
     # Проверка, залогинен ли пользователь
