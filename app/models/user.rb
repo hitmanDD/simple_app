@@ -69,6 +69,12 @@ class User < ApplicationRecord
     end
   end
 
+  # НОВАЯ ФИЧА: ПРОВЕРКА СТАТУСА "В СЕТИ"
+  # Считаем пользователя онлайн, если он был активен в последние 5 минут
+  def online?
+    last_seen_at.present? && last_seen_at > 5.minutes.ago
+  end
+
   def activate
     update_attribute(:activated,    true)
     update_attribute(:activated_at, Time.zone.now)
