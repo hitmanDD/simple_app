@@ -83,3 +83,26 @@ form.button_to,
 .new_relationship {
     display: inline-block;
 }
+
+/* --- НОВЫЙ БЛОК: ИНДИКАТОР ОНЛАЙНА --- */
+.status-square {
+    display: inline-block;
+    width: 12px;
+    /* Чуть увеличили, чтобы было заметнее */
+    height: 12px;
+    margin-left: 8px;
+    border-radius: 2px;
+    vertical-align: middle;
+    /* Чтобы был на одном уровне с текстом */
+}
+
+.online {
+    background-color: #28a745 !important;
+    /* Зеленый */
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+}
+
+.offline {
+    background-color: #6c757d !important;
+    /* Серый */
+}

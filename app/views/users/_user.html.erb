@@ -1,4 +1,14 @@
 <li>
   <%= gravatar_for user, size: 50 %>
   <%= link_to user.name, user %>
+
+  <%# Индикатор активности в стиле GitHub (квадратик) %>
+  <span class="status-square <%= user.online? ? 'online' : 'offline' %>" 
+        title="<%= user.online? ? 'В сети' : 'Оффлайн' %>">
+  </span>
+
+  <% if current_user.admin? && !current_user?(user) %>
+    | <%= link_to "delete", user, data: { "turbo-method": :delete,
+                                          turbo_confirm: "You sure?" } %>
+  <% end %>
 </li>

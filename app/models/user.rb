@@ -47,6 +47,10 @@ class User < ApplicationRecord
   
   # --- МЕТОДЫ КЛАССА ---
 
+  def online?
+    last_seen_at.present? && last_seen_at > 5.minutes.ago
+  end
+
   def User.digest(string)
     cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
                                                   BCrypt::Engine.cost
