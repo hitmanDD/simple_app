@@ -47,10 +47,6 @@ class User < ApplicationRecord
   
   # --- МЕТОДЫ КЛАССА ---
 
-  def online?
-    last_seen_at.present? && last_seen_at > 5.minutes.ago
-  end
-
   def User.digest(string)
     cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
                                                   BCrypt::Engine.cost
@@ -77,6 +73,19 @@ class User < ApplicationRecord
   # Считаем пользователя онлайн, если он был активен в последние 5 минут
   def online?
     last_seen_at.present? && last_seen_at > 5.minutes.ago
+  end
+
+  # ДОБАВЛЕННЫЙ МЕТОД: Форматирование времени последнего входа
+  # Показывает "В сети" или "Был(а) в сети ... назад"
+  def last_seen_info
+    return "Ни разу не был(а) в сети" if last_seen_at.nil?
+    
+    if online?
+      "В сети"
+    else
+      # Используем хелпер Rails для времени
+      "Был(а) в сети #{ActionController::Base.helpers.time_ago_in_words(last_seen_at)} назад"
+    end
   end
 
   def activate
