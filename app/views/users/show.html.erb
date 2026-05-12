@@ -13,11 +13,29 @@
       <h1><%= @user.name %></h1>
       <p><strong>Email:</strong> <%= @user.email %></p>
 
+      <%# --- МОЙ КОММЕНТАРИЙ: НОВЫЙ БЛОК СТАТИСТИКИ --- %>
+      <%# Оборачиваем в карточку, чтобы визуально выделить активность пользователя %>
+      <div class="stats-panel mb-4 p-3 border rounded bg-light" style="font-size: 0.9em;">
+        <p class="mb-2"><strong>Статус:</strong> 
+          <span class="status-square <%= @user.online? ? 'online' : 'offline' %>"></span>
+          <%= @user.online? ? 'В сети' : 'Оффлайн' %>
+        </p>
+        
+        <p class="mb-2"><strong>На сайте с:</strong><br>
+          <span class="text-muted"><%= time_ago_in_words(@user.created_at) %> назад</span>
+        </p>
+
+        <p class="mb-0"><strong>Активность:</strong><br>
+          <span class="text-muted"><%= @user.last_seen_info %></span>
+        </p>
+      </div>
+      <%# ---------------------------------------------- %>
+
       <%# Ссылка на редактирование профиля (только для владельца) %>
       <%# Это и есть наша "кнопка" для перехода к загрузчику %>
       <% if @user == current_user %>
         <div style="margin-bottom: 20px;">
-          <%= link_to "Изменить фото / Настройки", edit_user_path(@user), class: "btn btn-sm btn-default" %>
+          <%= link_to "Изменить фото / Настройки", edit_user_path(@user), class: "btn btn-sm btn-outline-secondary" %>
         </div>
       <% end %>
 
