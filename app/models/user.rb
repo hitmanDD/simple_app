@@ -41,6 +41,10 @@ class User < ApplicationRecord
                                    dependent:   :destroy
   has_many :followers, through: :passive_relationships, source: :follower
 
+  # Связи стены
+  has_many :wall_comments, class_name: 'Comment', foreign_key: 'wall_owner_id', dependent: :destroy
+  has_many :authored_comments, class_name: 'Comment', foreign_key: 'author_id', dependent: :destroy
+
   # Пароли и их валидация
   has_secure_password
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
