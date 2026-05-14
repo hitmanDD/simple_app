@@ -24,6 +24,12 @@ Rails.application.routes.draw do
       get :following # страница тех, на кого подписан юзер (/users/1/following)
       get :followers # страница тех, кто подписан на юзера (/users/1/followers)
     end
+
+    # Стенá профиля: вложенные маршруты для комментариев.
+    # Создает пути вида:
+    # POST   /users/:user_id/comments    => Добавить запись на стену
+    # DELETE /users/:user_id/comments/:id => Удалить запись со стены
+    resources :comments, only: [:create, :destroy]
   end
 
   # Маршруты для создания и удаления связей (подписки/отписки)
