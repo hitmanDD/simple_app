@@ -42,9 +42,10 @@
       <%= render 'follow_form' if logged_in? %>
     </section>
 
-    <!-- Форма для заметок (показывается только владельцу профиля) -->
+    <!-- Блок заметок и статистики (виден ТОЛЬКО владельцу профиля) -->
     <% if @user == current_user %>
       <section class="note_form" style="margin-top: 20px;">
+        <h3 style="font-size: 1.1em;">🔒 Личные заметки</h3>
         <%= render 'shared/note_form' %>
       </section>
       
@@ -66,10 +67,48 @@
       <%= will_paginate @microposts %>
     <% end %>
 
-    <!-- Блок твоих заметок (если они есть) -->
-    <% if @user.notes.any? %>
+    <!-- БЛОК СТЕНЫ ПРОФИЛЯ (Кастомная фича) -->
+    <hr>
+    <section class="wall">
+      <h3>Стена профиля (<%= @user.wall_comments.count %>)</h3>
+
+      <%# Форма добавления записи %>
+      <% if logged_in? %>
+        <div class="wall_form" style="margin-bottom: 20px;">
+          <%= form_with(model: [@user, Comment.new], local: true) do |f| %>
+            <div class="field">
+              <%= f.text_area :body, placeholder: "Напишите что-нибудь на стене...", class: "form-control" %>
+            </div>
+            <%= f.submit "Опубликовать", class: "btn btn-primary", style: "margin-top: 10px;" %>
+          <% end %>
+        </div>
+      <% end %>
+
+      <%# Вывод записей со стены %>
+      <ul class="comments" style="list-style: none; padding-left: 0;">
+        <% @user.wall_comments.each do |comment| %>
+          <li style="border-bottom: 1px solid #eee; padding: 10px 0;">
+            <strong><%= link_to comment.author.name, comment.author %>:</strong>
+            <span class="content"><%= comment.body %></span>
+            <div class="timestamp" style="font-size: 0.8em; color: #777;">
+              <%= time_ago_in_words(comment.created_at) %> назад
+              <% if current_user == comment.author || current_user == @user %>
+
+              | <%= button_to "удалить", user_comment_path(@user, comment), 
+                method: :delete, 
+                data: { confirm: "Уверены?" },
+                class: "btn-delete-link" %>
+              <% end %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </section>
+
+    <!-- Блок твоих заметок (ВИДЕН ТОЛЬКО ВЛАДЕЛЬЦУ) -->
+    <% if @user == current_user && @user.notes.any? %>
       <hr> <!-- Разделительная линия между типами контента -->
-      <h3>Заметки (<%= @user.notes.count %>)</h3>
+      <h3>🔒 Мои личные заметки (<%= @user.notes.count %>)</h3>
       <ol class="notes">
         <% @notes.each do |note| %>
           <li>

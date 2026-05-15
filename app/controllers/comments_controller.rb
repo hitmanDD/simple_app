@@ -1,5 +1,5 @@
 class CommentsController < ApplicationController
-  before_action :authenticate_user! # Если используешь Devise, иначе свой метод проверки авторизации
+  before_action :logged_in_user # Эта ошибка подтверждает(опубликовать-ошибка), что в проекте Хартла нет стандартного метода authenticate_user! (он из библиотеки Devise).Использовали метод logged_in_user, который определен в приложении
 
   def create
     @user = User.find(params[:user_id])
