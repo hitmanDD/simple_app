@@ -13,7 +13,7 @@
       <h1><%= @user.name %></h1>
       <p><strong>Email:</strong> <%= @user.email %></p>
 
-      <%# --- МОЙ КОММЕНТАРИЙ: НОВЫЙ БЛОК СТАТИСТИКИ --- %>
+      <%# ---  НОВЫЙ БЛОК СТАТИСТИКИ --- %>
       <%# Оборачиваем в карточку, чтобы визуально выделить активность пользователя %>
       <div class="stats-panel mb-4 p-3 border rounded bg-light" style="font-size: 0.9em;">
         <p class="mb-2"><strong>Статус:</strong> 
@@ -84,25 +84,15 @@
         </div>
       <% end %>
 
-      <%# Вывод записей со стены %>
+      <%# --- МОЙ НОВЫЙ БЛОК ВЫВОДА КОММЕНТАРИЕВ --- %>
       <ul class="comments" style="list-style: none; padding-left: 0;">
-        <% @user.wall_comments.each do |comment| %>
-          <li style="border-bottom: 1px solid #eee; padding: 10px 0;">
-            <strong><%= link_to comment.author.name, comment.author %>:</strong>
-            <span class="content"><%= comment.body %></span>
-            <div class="timestamp" style="font-size: 0.8em; color: #777;">
-              <%= time_ago_in_words(comment.created_at) %> назад
-              <% if current_user == comment.author || current_user == @user %>
-
-              | <%= button_to "удалить", user_comment_path(@user, comment), 
-                method: :delete, 
-                data: { confirm: "Уверены?" },
-                class: "btn-delete-link" %>
-              <% end %>
-            </div>
-          </li>
-        <% end %>
+        <% # Убираю старый цикл и использую магию рендеринга коллекции. %>
+        <% # Rails автоматически найдет файл app/views/comments/_comment.html.erb %>
+        <% # и применит его к каждому объекту из @user.wall_comments. %>
+        <% # Это позволит нам увидеть лайки, которые мы там прописали! %>
+        <%= render @user.wall_comments %>
       </ul>
+      <%# ------------------------------------------ %>
     </section>
 
     <!-- Блок твоих заметок (ВИДЕН ТОЛЬКО ВЛАДЕЛЬЦУ) -->

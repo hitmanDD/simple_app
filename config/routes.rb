@@ -32,6 +32,13 @@ Rails.application.routes.draw do
     resources :comments, only: [:create, :destroy]
   end
 
+  # --- НОВАЯ ФИЧА: ПОЛИМОРФНЫЕ ЛАЙКИ ---
+  # Маршруты для постановки и удаления лайков.
+  # POST   /likes    => Метод create (поставить лайк)
+  # DELETE /likes/:id => Метод destroy (убрать лайк)
+  resources :likes,               only: [:create, :destroy]
+  # -------------------------------------
+
   # Маршруты для создания и удаления связей (подписки/отписки)
   # Используем только :create и :destroy
   resources :relationships,       only: [:create, :destroy]

@@ -45,6 +45,15 @@ class User < ApplicationRecord
   has_many :wall_comments, class_name: 'Comment', foreign_key: 'wall_owner_id', dependent: :destroy
   has_many :authored_comments, class_name: 'Comment', foreign_key: 'author_id', dependent: :destroy
 
+  # --- НОВЫЙ БЛОК: СИСТЕМА ЛАЙКОВ ---
+  # Связь с таблицей лайков: юзер может поставить много лайков разным объектам
+  has_many :likes, dependent: :destroy
+
+  # Хелпер-метод: проверяет, поставил ли юзер лайк конкретному объекту
+  def liked?(object)
+    likes.exists?(likeable: object)
+  end
+  # ----------------------------------
   # Пароли и их валидация
   has_secure_password
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
