@@ -1,0 +1,26 @@
+<% # Мы используем .update вместо .replace, чтобы обновить только ВНУТРЕННОСТЬ блока %>
+<%= turbo_stream.update dom_id(@likeable, :like_section) do %>
+  
+  <% # Повторяем только внутреннюю верстку блока лайков %>
+  <strong style="font-size: 0.9em; color: #333;">
+    <%= @likeable.likes.count %>
+  </strong>
+
+  <% if current_user.liked?(@likeable) %>
+    <% like = current_user.likes.find_by(likeable: @likeable) %>
+    <%= button_to like_path(like), method: :delete, style: "background: none; border: none; cursor: pointer; padding: 0;" do %>
+      <span style="color: #e0245e; font-size: 1.2em; text-shadow: 0 0 1px #000;">❤️</span>
+    <% end %>
+  <% else %>
+    <%= button_to likes_path(like: { likeable_id: @likeable.id, likeable_type: 'Comment' }), 
+                   method: :post, 
+                   style: "background: none; border: none; cursor: pointer; padding: 0;" do %>
+      <span style="color: #536471; font-size: 1.2em; -webkit-text-stroke: 1px #333;">♡</span>
+    <% end %>
+  <% end %>
+
+  <div class="timestamp" style="font-size: 0.8em; color: #777; margin-left: auto;">
+    <%= time_ago_in_words(@likeable.created_at) %> назад
+  </div>
+
+<% end %>

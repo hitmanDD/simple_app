@@ -1,60 +1,37 @@
-<% # Каждому комментарию я даю свой уникальный ID. Это полезно, чтобы браузер знал, какой именно пост мы лайкаем %>
+<% # Оставляем li как есть, чтобы его не "дергало" %>
 <li id="comment-<%= comment.id %>" style="border-bottom: 1px solid #eee; padding: 10px 0; list-style: none;">
   
-  <% # Я вывожу автора комментария как ссылку на его профиль %>
   <strong><%= link_to comment.author.name, comment.author %>:</strong>
   
-  <% # Здесь само содержание сообщения на стене %>
   <span class="content" style="display: block; margin: 5px 0;">
     <%= comment.body %>
   </span>
 
-  <% # --- БЛОК ЛАЙКОВ --- %>
-  <div class="like-section" style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
+  <% # --- БЛОК ЛАЙКОВ (Точечное обновление) --- %>
+  <% # Мы вешаем ID прямо на обертку лайков. Turbo заменит только то, что внутри этого div %>
+  <div class="like-section" id="<%= dom_id(comment, :like_section) %>" style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
     
-    <% # Иду в базу данных и спрашиваю: "Сколько лайков у этого комментария?" %>
     <strong style="font-size: 0.9em; color: #333;">
       <%= comment.likes.count %>
     </strong>
 
-    <% # Я разрешаю нажимать на кнопки только тем, кто вошел в систему (например, тебе под Лолой) %>
     <% if logged_in? %>
-      
-      <% # Проверяю, лайкал ли текущий юзер этот коммент раньше (метод из модели User) %>
       <% if current_user.liked?(comment) %>
-        
-        <% # Если лайк уже есть, я нахожу его ID. Это нужно, чтобы кнопка знала, какой объект удалять (Unlike) %>
         <% like = current_user.likes.find_by(likeable: comment) %>
-        
-        <% # Кнопка DELETE. Она ведет в LikesController#destroy %>
         <%= button_to like_path(like), method: :delete, style: "background: none; border: none; cursor: pointer; padding: 0;" do %>
           <span style="color: #e0245e; font-size: 1.2em; text-shadow: 0 0 1px #000;">❤️</span>
         <% end %>
-
       <% else %>
-        
-        <% # Если лайка нет, я рисую контурное сердечко. Оно ведет в LikesController#create %>
-        <% # Я передаю скрытые параметры: ID комментария и его тип 'Comment' %>
         <%= button_to likes_path(like: { likeable_id: comment.id, likeable_type: 'Comment' }), 
                        method: :post, 
                        style: "background: none; border: none; cursor: pointer; padding: 0;" do %>
           <span style="color: #536471; font-size: 1.2em; -webkit-text-stroke: 1px #333;">♡</span>
         <% end %>
-
       <% end %>
     <% end %>
 
-    <% # Вывожу время публикации серым цветом, чтобы не отвлекало от сути %>
     <div class="timestamp" style="font-size: 0.8em; color: #777; margin-left: auto;">
       <%= time_ago_in_words(comment.created_at) %> назад
     </div>
-
-    <% # Если ты автор или хозяин стены — я рисую ссылку на удаление всего комментария %>
-    <% if current_user == comment.author || current_user == comment.wall_owner %>
-      <%= link_to "удалить", user_comment_path(comment.wall_owner, comment), 
-                             data: { "turbo-method": :delete, "turbo-confirm": "Удалить сообщение?" },
-                             style: "color: #cc0000; font-size: 0.8em; margin-left: 10px; text-decoration: none;" %>
-    <% end %>
   </div>
-  <% # ------------------------------- %>
 </li>
