@@ -1,38 +1,28 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Sample App</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
+<head>
+  <title>SocialNetwork</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  
+  <% # Оставляем все стандартные мета-теги %>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <%# Заменили стандартный "application" на твой "application.bootstrap" %>
-    <%= stylesheet_link_tag "application.bootstrap", "data-turbo-track": "reload" %>
-  </head>
+  <% # Стили — добавляем track: reload, чтобы Turbo следил за ними %>
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  
+  <% # главный тег импорта JS — без него Turbo не живет %>
+  <%= javascript_importmap_tags %>
 
-  <body>
-    <div class="container" style="margin-top: 50px;">
-      
-      <!-- --- НАЧАЛО НОВОГО БЛОКА --- -->
-      <nav class="d-flex justify-content-end mb-4">
-        <% if logged_in? %>
-          <span class="me-3 mt-2 text-muted">Вы вошли как <strong><%= current_user.name %></strong></span>
-        <%# Используем button_to вместо link_to — это создаст мини-форму, которая отправит DELETE запрос без помощи JS %>
-        <%= button_to "Выйти", logout_path, method: :delete, class: "btn btn-outline-danger btn-sm" %>
-        <% else %>
-          <%= link_to "Войти", login_path, class: "btn btn-primary btn-sm" %>
-        <% end %>
-      </nav>
-      <!-- --- КОНЕЦ НОВОГО БЛОКА --- -->
+  <% # --- То, чего не хватало для стабильности Turbo) --- %>
+  <% # Этот тег заставляет Turbo корректно обрабатывать переходы и не "дергать" страницу %>
+  <meta name="turbo-visit-control" content="reload">
+  
+  <% # Фавиконка: добавил проверку на наличие файла, чтобы Rails не выдавал ошибку AssetNotFound %>
+  <% if Rails.application.assets.find_asset('favicon.ico') %>
+    <%= favicon_link_tag 'favicon.ico' %>
+  <% end %>
+</head>
 
-      <% flash.each do |message_type, message| %>
-        <div class="alert alert-success">
-          <%= message %>
-        </div>
-      <% end %>
-
-      <%= yield %>
-    </div>
-  </body>
-</html>
+<body style="background-color: #f0f2f5; margin: 0; font-family: sans-serif;">
+  <% # Оставляем yield, куда рендерится страница %>
+  <%= yield %>
+</body>

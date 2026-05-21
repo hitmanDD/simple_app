@@ -76,3 +76,5 @@ end
   #gem 'bootstrap-will_paginate' 
   
   gem 'sassc-rails'
+
+  gem "importmap-rails"

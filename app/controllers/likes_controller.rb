@@ -6,23 +6,30 @@ class LikesController < ApplicationController
 
     if @like.save
       respond_to do |format|
-        format.html { redirect_back fallback_location: root_path }
         # Rails ищет файл app/views/likes/create.turbo_stream.erb
         format.turbo_stream 
+        format.html { redirect_back fallback_location: root_path }
       end
     end
   end
 
-  # Метод для удаления лайка
+  # Метод для удаления лайка (Обновлен: теперь защищен от RecordNotFound)
   def destroy
-    @like = current_user.likes.find(params[:id])
-    @likeable = @like.likeable # Запоминаем, что мы лайкали, перед удалением
-    @like.destroy
+    # Мы используем find_by вместо find, чтобы не было ошибки, если лайк уже удален
+    @like = current_user.likes.find_by(id: params[:id])
+    
+    if @like
+      @likeable = @like.likeable # Запоминаем, что мы лайкали, перед удалением
+      @like.destroy
 
-    respond_to do |format|
-      format.html { redirect_back fallback_location: root_path }
-      # Rails ищет файл app/views/likes/destroy.turbo_stream.erb
-      format.turbo_stream 
+      respond_to do |format|
+        # Rails ищет файл app/views/likes/destroy.turbo_stream.erb
+        format.turbo_stream 
+        format.html { redirect_back fallback_location: root_path }
+      end
+    else
+      # Если лайка уже нет в базе, просто возвращаем пустой успешный ответ
+      head :no_content
     end
   end
 
