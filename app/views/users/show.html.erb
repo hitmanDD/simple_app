@@ -1,114 +1,31 @@
-<% provide(:title, @user.name) %>
-<div class="row">
-  <!-- Левая колонка: Информация о пользователе и формы -->
-  <aside class="col-md-4">
-    <section class="user_info">
-      <%# --- БЛОК АВАТАРКИ --- %>
-      <%# Выносим картинку в отдельный контейнер над именем, чтобы текст не "наползал" %>
-      <div class="profile-avatar-container" style="margin-bottom: 15px;">
-        <%# Используем наш хелпер: покажет черный квадрат (150px) или Gravatar %>
-        <%= image_tag @user.avatar_display(150), alt: @user.name, class: "user-avatar-large" %>
-      </div>
-      
-      <h1><%= @user.name %></h1>
-      <p><strong>Email:</strong> <%= @user.email %></p>
-
-      <%# ---  НОВЫЙ БЛОК СТАТИСТИКИ --- %>
-      <%# Оборачиваем в карточку, чтобы визуально выделить активность пользователя %>
-      <div class="stats-panel mb-4 p-3 border rounded bg-light" style="font-size: 0.9em;">
-        <p class="mb-2"><strong>Статус:</strong> 
-          <span class="status-square <%= @user.online? ? 'online' : 'offline' %>"></span>
-          <%= @user.online? ? 'В сети' : 'Оффлайн' %>
-        </p>
-        
-        <p class="mb-2"><strong>На сайте с:</strong><br>
-          <span class="text-muted"><%= time_ago_in_words(@user.created_at) %> назад</span>
-        </p>
-
-        <p class="mb-0"><strong>Активность:</strong><br>
-          <span class="text-muted"><%= @user.last_seen_info %></span>
-        </p>
-      </div>
-      <%# ---------------------------------------------- %>
-
-      <%# Ссылка на редактирование профиля (только для владельца) %>
-      <%# Это и есть наша "кнопка" для перехода к загрузчику %>
-      <% if @user == current_user %>
-        <div style="margin-bottom: 20px;">
-          <%= link_to "Изменить фото / Настройки", edit_user_path(@user), class: "btn btn-sm btn-outline-secondary" %>
-        </div>
-      <% end %>
-
-      <%= render 'follow_form' if logged_in? %>
-    </section>
-
-    <!-- Блок заметок и статистики (виден ТОЛЬКО владельцу профиля) -->
-    <% if @user == current_user %>
-      <section class="note_form" style="margin-top: 20px;">
-        <h3 style="font-size: 1.1em;">🔒 Личные заметки</h3>
-        <%= render 'shared/note_form' %>
-      </section>
-      
-      <section class="stats" style="margin-top: 20px;">
-        <%= render 'shared/stats' %>
-      </section>
-    <% end %>
-  </aside>
-
-  <!-- Правая колонка: Ленты контента -->
-  <div class="col-md-8">
+<div style="display: flex; gap: 20px; align-items: flex-start; max-width: 1200px; margin: 0 auto; padding: 20px;">
+  
+  <% # --- ЛЕВАЯ КОЛОНКА (Фиксированная) --- %>
+  <div style="flex: 0 0 300px; position: sticky; top: 20px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <h2 style="margin-top: 0;"><%= @user.name %></h2>
+    <p style="color: #666; font-size: 0.9em;">Email: <%= @user.email %></p>
     
-    <!-- Блок микросообщений (Глава 13) -->
-    <% if @user.microposts.any? %>
-      <h3>Микросообщения (<%= @user.microposts.count %>)</h3>
-      <ol class="microposts">
-        <%= render @microposts %>
-      </ol>
-      <%= will_paginate @microposts %>
-    <% end %>
+    <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px;">
+      <p>Статус: <span style="color: #777;">Оффлайн</span></p>
+      <p style="font-size: 0.85em;">На сайте с:<br> <%= time_ago_in_words(@user.created_at) %> назад</p>
+      <p style="font-size: 0.85em; color: #999;">Активность:<br> Был(а) в сети 6 days назад</p>
+    </div>
+  </div>
 
-    <!-- БЛОК СТЕНЫ ПРОФИЛЯ (Кастомная фича) -->
-    <hr>
-    <section class="wall">
-      <h3>Стена профиля (<%= @user.wall_comments.count %>)</h3>
+  <% # --- ПРАВАЯ КОЛОНКА (Стена с прокруткой) --- %>
+  <div style="flex: 1; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); min-height: 100vh;">
+    
+    <h3 style="margin-top: 0;">Стена профиля (<%= @user.comments.count %>)</h3>
 
-      <%# Форма добавления записи %>
-      <% if logged_in? %>
-        <div class="wall_form" style="margin-bottom: 20px;">
-          <%= form_with(model: [@user, Comment.new], local: true) do |f| %>
-            <div class="field">
-              <%= f.text_area :body, placeholder: "Напишите что-нибудь на стене...", class: "form-control" %>
-            </div>
-            <%= f.submit "Опубликовать", class: "btn btn-primary", style: "margin-top: 10px;" %>
-          <% end %>
-        </div>
-      <% end %>
+    <% # Форма записи на стене %>
+    <div style="margin-bottom: 20px;">
+      <%= render 'comments/form', comment: @comment %>
+    </div>
 
-      <%# --- МОЙ НОВЫЙ БЛОК ВЫВОДА КОММЕНТАРИЕВ --- %>
-      <ul class="comments" style="list-style: none; padding-left: 0;">
-        <% # Убираю старый цикл и использую магию рендеринга коллекции. %>
-        <% # Rails автоматически найдет файл app/views/comments/_comment.html.erb %>
-        <% # и применит его к каждому объекту из @user.wall_comments. %>
-        <% # Это позволит нам увидеть лайки, которые мы там прописали! %>
-        <%= render @user.wall_comments %>
-      </ul>
-      <%# ------------------------------------------ %>
-    </section>
+    <% # Список комментариев %>
+    <ul id="comments-list" style="padding: 0; margin: 0;">
+      <%= render @comments %>
+    </ul>
 
-    <!-- Блок твоих заметок (ВИДЕН ТОЛЬКО ВЛАДЕЛЬЦУ) -->
-    <% if @user == current_user && @user.notes.any? %>
-      <hr> <!-- Разделительная линия между типами контента -->
-      <h3>🔒 Мои личные заметки (<%= @user.notes.count %>)</h3>
-      <ol class="notes">
-        <% @notes.each do |note| %>
-          <li>
-            <span class="content"><%= note.content %></span>
-            <span class="timestamp">
-              Опубликовано <%= time_ago_in_words(note.created_at) %> назад.
-            </span>
-          </li>
-        <% end %>
-      </ol>
-    <% end %>
   </div>
 </div>
