@@ -78,3 +78,5 @@ end
   gem 'sassc-rails'
 
   gem "importmap-rails"
+
+  gem 'pagy', '~> 9.0'

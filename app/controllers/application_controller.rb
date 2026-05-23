@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  include Pagy::Backend # Подключаем пагинацию для всех контроллеров
   include SessionsHelper
   include UsersHelper
 
@@ -17,8 +18,6 @@ class ApplicationController < ActionController::Base
 
     # Метод для обновления времени последнего визита
     def update_last_seen_at
-      # Используем update_column для скорости: он меняет только одно поле в БД,
-      # не затрагивая updated_at и пропуская валидации.
       current_user.update_column(:last_seen_at, Time.current)
     end
 end
