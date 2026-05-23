@@ -15,7 +15,7 @@
   <% # --- ПРАВАЯ КОЛОНКА (Стена с прокруткой) --- %>
   <div style="flex: 1; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); min-height: 100vh;">
     
-    <h3 style="margin-top: 0;">Стена профиля (<%= @user.comments.count %>)</h3>
+    <h3 style="margin-top: 0;">Стена профиля (<%= @user.wall_comments.count %>)</h3>
 
     <% # Форма записи на стене %>
     <div style="margin-bottom: 20px;">
@@ -23,8 +23,9 @@
     </div>
 
     <% # Список комментариев %>
-    <ul id="comments-list" style="padding: 0; margin: 0;">
-      <%= render @comments %>
+    <ul id="comments-list" style="list-style: none; padding: 0; margin: 0;">
+      <% # Рендерим только сохраненные записи, чтобы избежать ошибки nil в created_at %>
+      <%= render @user.wall_comments.select(&:persisted?) %>
     </ul>
 
   </div>

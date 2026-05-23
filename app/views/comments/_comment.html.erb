@@ -1,8 +1,7 @@
 <% # Каждому комментарию я даю свой уникальный ID. Это полезно, чтобы браузер знал, какой именно пост мы лайкаем %>
 <li id="comment-<%= comment.id %>" style="border-bottom: 1px solid #eee; padding: 10px 0; list-style: none;">
   
-  <% # Я вывожу автора комментария как ссылку на его профиль %>
-  <strong><%= link_to comment.author.name, comment.author %>:</strong>
+  <strong><%= link_to comment.author&.name || "Удаленный пользователь", comment.author %>:</strong>
   
   <% # Здесь само содержание сообщения на стене %>
   <span class="content" style="display: block; margin: 5px 0;">
@@ -49,10 +48,10 @@
       <% end %>
     <% end %>
 
-    <% # Вывожу время публикации %>
-    <div class="timestamp" style="font-size: 0.8em; color: #777; margin-left: auto;">
-      <%= time_ago_in_words(comment.created_at) %> назад
-    </div>
+   <% # Проверяем, есть ли дата создания, чтобы не было ошибки nil %>
+  <div class="timestamp" style="font-size: 0.8em; color: #777; margin-left: auto;">
+  <%= comment.created_at ? "#{time_ago_in_words(comment.created_at)} назад" : "только что" %>
+  </div>
 
     <% # Если ты автор или хозяин стены — ссылка на удаление всего комментария %>
     <% if current_user == comment.author || current_user == comment.wall_owner %>
