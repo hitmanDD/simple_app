@@ -79,4 +79,4 @@ end
 
   gem "importmap-rails"
 
-  gem 'pagy', '~> 9.0'
+  gem 'pagy', '~> 5.10'

@@ -153,6 +153,8 @@ GEM
     nio4r (2.7.5)
     nokogiri (1.17.2-x86_64-linux)
       racc (~> 1.4)
+    pagy (5.10.1)
+      activesupport
     pg (1.6.3-x86_64-linux)
     pp (0.6.3)
       prettyprint
@@ -260,6 +262,7 @@ DEPENDENCIES
   jbuilder
   jsbundling-rails
   letter_opener
+  pagy (~> 5.10)
   pg (~> 1.1)
   puma (~> 5.0)
   rails (~> 7.0.4)
