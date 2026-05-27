@@ -9,13 +9,20 @@ class MicropostsController < ApplicationController
   def create
     # Создаем пост, связанный с текущим пользователем
     @micropost = current_user.microposts.build(micropost_params)
-    if @micropost.save
-      flash[:success] = "Пост создан!"
-      redirect_to root_url
-    else
-      # Если пост не прошел валидацию (например, пустой), подгружаем ленту снова для главной
-      @feed_items = current_user.feed.paginate(page: params[:page])
-      render 'static_pages/home', status: :unprocessable_entity
+    
+    respond_to do |format|
+      if @micropost.save
+        flash.now[:success] = "Пост создан!" # НОВАЯ ФИЧА: .now нужен, чтобы флеш отобразился при Turbo-ответе
+        format.html { redirect_to root_url }
+        format.turbo_stream # НОВАЯ ФИЧА: Ищет файл create.turbo_stream.erb для магии без перезагрузки
+      else
+        # Если пост не прошел валидацию (например, пустой), подгружаем ленту снова для главной
+        # ВАЖНО: Так как мы используем Pagy, переписываем пагинацию Хартла на Pagy
+        @pagy, @feed_items = pagy(current_user.feed, items: 10)
+        
+        format.html { render 'static_pages/home', status: :unprocessable_entity }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("micropost-form", partial: "microposts/form") } # НОВАЯ ФИЧА: Возвращает форму с ошибками без перезагрузки страницы
+      end
     end
   end
 
