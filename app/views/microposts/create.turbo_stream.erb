@@ -1,0 +1,14 @@
+<%# 1. Мгновенно вставляем новый микропост в самый верх списка (ленты) %>
+<%# По книге Хартла посты выводятся внутри тега <ol class="microposts"> или аналогичного контейнера %>
+<%#= turbo_stream.prepend "microposts-list", partial: "microposts/micropost", locals: { micropost: @micropost } %>
+
+<%# 2. Очищаем форму и убираем старые ошибки валидации, заменяя форму на пустую и чистую %>
+<%#= turbo_stream.replace "micropost-form", partial: "shared/micropost_form" %>
+
+<%# 3. Дополнительная фича: выводим флеш-уведомление "Пост создан!" без перезагрузки %>
+<%#= turbo_stream.prepend "flash-messages", partial: "shared/flash_messages" if lookup_context.exists?("shared/flash_messages") %>
+<%# 1. Мгновенно вставляем новый комментарий в самый верх твоего списка <ul id="comments-list"> %>
+<%= turbo_stream.prepend "comments-list", partial: "wall_comments/wall_comment", locals: { wall_comment: @comment } %>
+
+<%# 2. Находим форму по ID и полностью очищаем её %>
+<%= turbo_stream.replace "wall-comment-form", partial: "comments/form", locals: { comment: @user.wall_comments.build } %>

@@ -1,7 +1,14 @@
-<%= form_with(model: @micropost, local: true) do |f| %>
+<%# НОВАЯ ФИЧА: Добавили id для формы, чтобы Turbo мог её очищать, и убрали local: true, так как в Rails 7 формы по умолчанию работают через Turbo %>
+<%= form_with(model: @micropost, id: "micropost-form") do |f| %>
+  
+  <%# Вывод ошибок валидации %>
   <%= render 'shared/error_messages', object: f.object %>
+  
   <div class="field">
+    <%# Поле ввода текста %>
     <%= f.text_area :content, placeholder: "Что нового?..." %>
   </div>
+  
+  <%# Кнопка отправки %>
   <%= f.submit "Опубликовать", class: "btn btn-primary" %>
 <% end %>
