@@ -1,0 +1,23 @@
+<% # Каждому комментарию я даю свой уникальный ID. Это полезно, чтобы браузер знал, какой именно пост мы лайкаем %>
+<li id="comment-<%= wall_comment.id %>" style="border-bottom: 1px solid #eee; padding: 10px 0; list-style: none;">
+  
+  <strong><%= link_to wall_comment.author&.name || "Удаленный пользователь", wall_comment.author %>:</strong>
+  
+  <% # Здесь само содержание сообщения на стене %>
+  <span class="content" style="display: block; margin: 5px 0;">
+    <%= wall_comment.body %>
+  </span>
+
+  <% # Наш блок лайков с уникальным ID %>
+  <div class="like-section" id="<%= dom_id(wall_comment, :like_section) %>" style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
+    <% # Подключаем вынесенную логику лайков и передаем текущий комментарий %>
+    <%= render partial: "wall_comments/like_section", locals: { wall_comment: wall_comment } %>
+    
+    <% # Если ты автор или хозяин стены — ссылка на удаление всего комментария %>
+    <% if current_user == wall_comment.author || current_user == wall_comment.wall_owner %>
+      <%= link_to "удалить", user_wall_comment_path(wall_comment.wall_owner, wall_comment), 
+                             data: { "turbo-method": :delete, "turbo-confirm": "Удалить сообщение?" },
+                             style: "color: #cc0000; font-size: 0.8em; margin-left: 10px; text-decoration: none;" %>
+    <% end %>
+  </div>
+</li>

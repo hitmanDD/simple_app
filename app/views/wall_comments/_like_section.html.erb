@@ -1,0 +1,24 @@
+<% # Повторяем только внутреннюю верстку блока лайков %>
+<strong style="font-size: 0.9em; color: #333;">
+  <%= wall_comment.likes.count %>
+</strong>
+
+<% if logged_in? %>
+  <% if current_user.liked?(wall_comment) %>
+    <% like = current_user.likes.find_by(likeable: wall_comment) %>
+    <%= button_to like_path(like), method: :delete, style: "background: none; border: none; cursor: pointer; padding: 0;" do %>
+      <span style="color: #e0245e; font-size: 1.2em; text-shadow: 0 0 1px #000;">❤️</span>
+    <% end %>
+  <% else %>
+    <% # Передаем правильный полиморфный тип WallComment %>
+    <%= button_to likes_path(like: { likeable_id: wall_comment.id, likeable_type: 'WallComment' }), 
+                   method: :post, 
+                   style: "background: none; border: none; cursor: pointer; padding: 0;" do %>
+      <span style="color: #536471; font-size: 1.2em; -webkit-text-stroke: 1px #333;">♡</span>
+    <% end %>
+  <% end %>
+<% end %>
+
+<div class="timestamp" style="font-size: 0.8em; color: #777; margin-left: auto;">
+  <%= wall_comment.created_at ? "#{time_ago_in_words(wall_comment.created_at)} назад" : "только что" %>
+</div>
