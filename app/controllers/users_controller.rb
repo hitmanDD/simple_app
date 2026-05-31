@@ -18,10 +18,19 @@ class UsersController < ApplicationController
     # ГЛАВА 13: Загружаем микросообщения пользователя с пагинацией
     @microposts = @user.microposts.paginate(page: params[:page])
     
+    # --- НОВЫЙ БЛОК: ИНТЕГРАЦИЯ PAGY ДЛЯ СТЕНЫ ПРОФИЛЯ ---
+    # Загружаем записи на стене с пагинацией Pagy от новых к старым. Переменная :page_comments изолирует клики по страницам стены.
+    @pagy_comments, @wall_comments = pagy(@user.wall_comments.order(created_at: :desc), page_param: :page_comments)
+    # --------------------------------------------------------------
+    
     # Создаем пустые объекты для форм, если пользователь в системе
     if logged_in?
       @note = current_user.notes.build 
       @micropost = current_user.microposts.build # Для будущей формы постов
+      
+      # --- НОВАЯ СТРОКА: ИНИЦИАЛИЗАЦИЯ ФОРМЫ СТЕНЫ ---
+      # Создаем пустой комментарий для стены, привязанный к текущему владельцу профиля (@user)
+      @wall_comment = @user.wall_comments.build
     end
   end
 

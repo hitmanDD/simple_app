@@ -19,14 +19,25 @@
 
     <% # Форма записи на стене %>
     <div style="margin-bottom: 20px;">
-      <%= render 'comments/form', comment: @comment %>
+      <% # --- ИСПРАВЛЕНИЕ: Передаем правильную переменную @wall_comment, которую создали в контроллере --- %>
+      <%= render 'comments/form', comment: @wall_comment %>
     </div>
 
     <% # Список комментариев %>
     <ul id="comments-list" style="list-style: none; padding: 0; margin: 0;">
       <% # Рендерим только сохраненные записи, чтобы избежать ошибки nil в created_at %>
-      <%= render @user.wall_comments.select(&:persisted?) %>
+      <% # --- ИСПРАВЛЕНИЕ: Используем пагинированную переменную @wall_comments вместо всех записей подряд --- %>
+      <%= render @wall_comments.select(&:persisted?) %>
     </ul>
+
+    <% # --- НОВЫЙ БЛОК: КНОПКИ ПАГИНАЦИИ ДЛЯ СТЕНЫ --- %>
+    <% # Отображаем пагинацию Pagy только если записей больше, чем умещается на одной странице %>
+    <% if @pagy_comments.pages > 1 %>
+      <div style="margin-top: 20px; text-align: center;">
+        <%== pagy_nav(@pagy_comments) %>
+      </div>
+    <% end %>
+    <% # -------------------------------------------------- %>
 
   </div>
 </div>
