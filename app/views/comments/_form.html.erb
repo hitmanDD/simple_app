@@ -1,10 +1,11 @@
-<% # --- ИСПРАВЛЕНИЕ: Передаем в модель массив из [@user, comment], где comment — это переменная, пришедшая из профиля --- %>
+<% # --- НАДЕЖНЫЙ ВАРИАНТ: Отключаем Turbo для этой формы, чтобы данные уходили классическим POST-запросом --- %>
 <%= form_with(model: [ @user, comment ], 
+              url: user_comments_path(@user), 
               id: "wall-comment-form", 
-              local: true) do |f| %>
+              data: { turbo: false }) do |f| %>
               
   <div style="margin-bottom: 10px;">
-    <% # --- ИСПРАВЛЕНИЕ: Поменяли :content на :body, так как это поле прописано в CommentsController и базе данных --- %>
+    <% # --- ВАЖНО: Поле должно называться :body, как в базе и контроллере --- %>
     <%= f.text_area :body, 
                     placeholder: "Что нового?", 
                     style: "width: 100%; height: 60px; border-radius: 6px; border: 1px solid #ddd; padding: 10px; resize: none;" %>

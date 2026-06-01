@@ -4,22 +4,20 @@ class CommentsController < ApplicationController
   def create
     @user = User.find(params[:user_id])
     # Создаем комментарий: текущий юзер — автор, @user — владелец стены
-    # --- ИСПРАВЛЕНИЕ: Переименовали в @wall_comment для точного соответствия нашей вьюхе профиля ---
     @wall_comment = @user.wall_comments.build(comment_params)
     @wall_comment.author = current_user 
 
     if @wall_comment.save
-      redirect_to user_path(@user), notice: 'Сообщение успешно добавлено на стену!'
-    else
-      # --- ИСПРАВЛЕНИЕ: Если сохранение не удалось, мы делаем render вместо redirect_to. ---
-      # Это позволяет показать конкретные ошибки валидации прямо на странице, не стирая текст.
-      # Для этого инициализируем переменные профиля и пагинацию Pagy, чтобы страница не падала:
-      @notes = @user.notes
-      @microposts = @user.microposts.paginate(page: params[:page])
-      @pagy_comments, @wall_comments = pagy(@user.wall_comments.order(created_at: :desc), page_param: :page_comments)
+      # Используем одинаковый стиль всплывающих окон через flash
+      flash[:success] = 'Сообщение успешно добавлено на стену!'
       
-      flash.now[:danger] = 'Не удалось оставить сообщение. Текст слишком короткий или длинный.'
-      render 'users/show', status: :unprocessable_entity
+      # --- ИСПРАВЛЕНИЕ: Перенаправляем на наш гарантированный роут профиля ---
+      redirect_to user_profile_path(@user)
+    else
+      flash[:danger] = 'Не удалось оставить сообщение. Текст слишком короткий или длинный.'
+      
+      # --- ИСПРАВЛЕНИЕ: Возвращаем на профиль со статусом see_other для Turbo ---
+      redirect_to user_profile_path(@user), status: :see_other
     end
   end
 
@@ -31,9 +29,14 @@ class CommentsController < ApplicationController
     # Удалить может либо автор сообщения, либо владелец стены
     if current_user == @wall_comment.author || current_user == @user
       @wall_comment.destroy
-      redirect_to user_path(@user), notice: 'Сообщение удалено.', status: :see_other
+      
+      # --- ИСПРАВЛЕНИЕ: Используем наш гарантированный роут профиля ---
+      flash[:success] = 'Сообщение удалено.'
+      redirect_to user_profile_path(@user), status: :see_other
     else
-      redirect_to user_path(@user), alert: 'У вас нет прав на удаление этого сообщения.', status: :see_other
+      # --- ИСПРАВЛЕНИЕ: Используем наш гарантированный роут профиля ---
+      flash[:danger] = 'У вас нет прав на удаление этого сообщения.'
+      redirect_to user_profile_path(@user), status: :see_other
     end
   end
 

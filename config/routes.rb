@@ -1,51 +1,65 @@
-class MicropostsController < ApplicationController
-  # 1. Защита: только залогиненные пользователи могут создавать и удалять посты
-  before_action :logged_in_user, only: [:create, :destroy]
+Rails.application.routes.draw do
+  # Главная страница приложения
+  root "static_pages#home"
+
+  # Страницы сброса паролей
+  get 'password_resets/new'
+  get 'password_resets/edit'
   
-  # 2. Безопасность: перед удалением проверяем, принадлежит ли пост текущему юзеру
-  before_action :correct_user,   only: :destroy
+  # Статические страницы
+  get "/help",    to: "static_pages#help"
+  get "/about",   to: "static_pages#about"
+  get "/contact", to: "static_pages#contact"
+  get '/signup',  to: 'users#new'
+  
+  # Маршруты для сессий (вход/выход)
+  get    '/login',   to: 'sessions#new'
+  post   '/login',   to: 'sessions#create'
+  delete '/logout',  to: 'sessions#destroy'
 
-  # Метод для создания нового поста
-  def create
-    # Создаем пост, связанный с текущим пользователем
-    @micropost = current_user.microposts.build(micropost_params)
-    
-    respond_to do |format|
-      if @micropost.save
-        flash.now[:success] = "Пост создан!" # НОВАЯ ФИЧА: .now нужен, чтобы флеш отобразился при Turbo-ответе
-        format.html { redirect_to root_url }
-        format.turbo_stream # НОВАЯ ФИЧА: Ищет файл create.turbo_stream.erb для магии без перезагрузки
-      else
-        # Если пост не прошел валидацию (например, пустой), подгружаем ленту снова для главной
-        # ВАЖНО: Так как мы используем Pagy, переписываем пагинацию Хартла на Pagy
-        @pagy, @feed_items = pagy(current_user.feed, items: 10)
-        
-        format.html { render 'static_pages/home', status: :unprocessable_entity }
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("micropost-form", partial: "microposts/form") } # НОВАЯ ФИЧА: Возвращает форму с ошибками без перезагрузки страницы
-      end
+  # --- ИСПРАВЛЕНИЕ ЯДРА МАРШРУТОВ ПОЛЬЗОВАТЕЛЕЙ ---
+  # Явно прописываем базовые пути, которые Rails терял из-за кастомных хелперов Хартла
+  get    '/users',          to: 'users#index', as: 'all_users'
+  get    '/users/:id',      to: 'users#show',  as: 'user_profile'
+  # ------------------------------------------------
+
+  # Расширенные маршруты для пользователей (Глава 14)
+  # Оставляем только нужные экшены, чтобы вложенные ресурсы не ломали базовые GET-запросы
+  resources :users, only: [:index, :show, :new, :create, :edit, :update, :destroy] do
+    # member добавляет маршруты к конкретному пользователю (через его id)
+    member do
+      get :following # страница тех, на кого подписан юзер (/users/1/following)
+      get :followers # страница тех, кто подписан на юзера (/users/1/followers)
     end
+
+    # Стенá профиля: вложенные маршруты для комментариев.
+    # Создает пути вида:
+    # POST   /users/:user_id/comments    => Добавить запись на стену
+    # DELETE /users/:user_id/comments/:id => Удалить запись со стены
+    resources :comments, only: [:create, :destroy]
   end
 
-  # Метод для удаления поста
-  def destroy
-    # Объект @micropost уже найден в фильтре correct_user
-    @micropost.destroy
-    flash[:success] = "Пост удален"
-    # Возвращаем пользователя туда, где он был (в профиль или на главную)
-    redirect_back_or_to(root_url, status: :see_other)
-  end
+  # --- НОВАЯ ФИЧА: ПОЛИМОРФНЫЕ ЛАЙКИ ---
+  # Маршруты для постановки и удаления лайков.
+  # POST   /likes    => Метод create (поставить лайк)
+  # DELETE /likes/:id => Метод destroy (убрать лайк)
+  resources :likes,               only: [:create, :destroy]
+  # -------------------------------------
 
-  private
+  # Маршруты для создания и удаления связей (подписки/отписки)
+  # Используем только :create и :destroy
+  resources :relationships,       only: [:create, :destroy]
 
-    # Разрешаем передавать только поле content
-    def micropost_params
-      params.require(:micropost).permit(:content)
-    end
-
-    # Предварительный фильтр: ищем пост только в сообщениях ТЕКУЩЕГО пользователя
-    def correct_user
-      @micropost = current_user.microposts.find_by(id: params[:id])
-      # Если пост не найден (значит он чужой или его нет), отправляем на главную
-      redirect_to root_url, status: :see_other if @micropost.nil?
-    end
+  # Маршруты для заметок (наша кастомная фича)
+  # Разрешаем создание и удаление заметок
+  resources :notes,               only: [:create, :destroy]
+  
+  # Маршруты для активации аккаунта
+  resources :account_activations, only: [:edit]
+  
+  # Маршруты для сброса пароля
+  resources :password_resets,     only: [:new, :create, :edit, :update]
+  
+  # Маршруты для микросообщений (постов)
+  resources :microposts,          only: [:create, :destroy]
 end
