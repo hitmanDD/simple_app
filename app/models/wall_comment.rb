@@ -5,7 +5,8 @@ class WallComment < ApplicationRecord
 
   # Связи для системы лайков
   # зависимость dependent: :destroy удалит лайки из базы, если удалить сам комментарий
-  has_many :likes, dependent: :destroy
+  # Переведено на полиморфизм: указываем Rails, что этот объект является likeable
+  has_many :likes, as: :likeable, dependent: :destroy
 
   # Бэкенд-валидация: защищаем базу данных от пустых или слишком длинных текстов
   validates :body, presence: true, length: { maximum: 500, message: "не может превышать 500 символов" }
