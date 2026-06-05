@@ -1,16 +1,24 @@
-<% # --- НАДЕЖНЫЙ ВАРИАНТ: Отключаем Turbo для этой формы, чтобы данные уходили классическим POST-запросом --- %>
+<% # --- структура с отключенным Turbo + маркер для JS --- %>
 <%= form_with(model: [ @user, comment ], 
               url: user_comments_path(@user), 
               id: "wall-comment-form", 
-              data: { turbo: false }) do |f| %>
+              data: { turbo: false, behavior: "char-counter-form" }) do |f| %>
               
   <div style="margin-bottom: 10px;">
-    <% # --- ВАЖНО: Поле должно называться :body, как в базе и контроллере --- %>
+    <% # --- ВАЖНО: Твоё поле :body + маркер для перехвата ввода JS --- %>
     <%= f.text_area :body, 
                     placeholder: "Что нового?", 
+                    data: { target: "counter-input" }, 
                     style: "width: 100%; height: 60px; border-radius: 6px; border: 1px solid #ddd; padding: 10px; resize: none;" %>
   </div>
 
+  <% # --- БЛОК СЧЕТЧИКА: Добавляем строчку отображения цифр под полем --- %>
+  <div style="margin-bottom: 10px; text-align: right;">
+    <span data-target="counter-display" style="font-size: 0.85em; color: #777; font-family: monospace;">0 / 500</span>
+  </div>
+
+  <% # --- кнопка отправки + маркер блокировки для JS --- %>
   <%= f.submit "Отправить", 
+               data: { target: "counter-submit" }, 
                style: "background: #007bff; color: white; border: none; padding: 7px 15px; border-radius: 4px; cursor: pointer;" %>
 <% end %>

@@ -3,20 +3,31 @@
   <%= wall_comment.likes.count %>
 </strong>
 
-<% if logged_in? %>
-  <% if current_user.liked?(wall_comment) %>
-    <% like = current_user.likes.find_by(likeable: wall_comment) %>
+<% # Замена logged_in? на user_signed_in? (стандарт для Devise) %>
+<% if user_signed_in? %>
+  
+  <% # Используем метод liked_by?, который мы ТОЛЬКО ЧТО добавили в твою модель WallComment %>
+  <% if wall_comment.liked_by?(current_user) %>
+    
+    <% # Находим лайк текущего пользователя у этого конкретного комментария %>
+    <% like = wall_comment.likes.find_by(user: current_user) %>
+    
+    <% # Кнопка DELETE отправляет запрос на обычный /likes/:id %>
     <%= button_to like_path(like), method: :delete, style: "background: none; border: none; cursor: pointer; padding: 0;" do %>
       <span style="color: #e0245e; font-size: 1.2em; text-shadow: 0 0 1px #000;">❤️</span>
     <% end %>
+
   <% else %>
-    <% # Передаем правильный полиморфный тип WallComment %>
+    
+    <% # Передаем правильный полиморфный тип WallComment в твой универсальный LikesController %>
     <%= button_to likes_path(like: { likeable_id: wall_comment.id, likeable_type: 'WallComment' }), 
                    method: :post, 
                    style: "background: none; border: none; cursor: pointer; padding: 0;" do %>
       <span style="color: #536471; font-size: 1.2em; -webkit-text-stroke: 1px #333;">♡</span>
     <% end %>
+
   <% end %>
+
 <% end %>
 
 <div class="timestamp" style="font-size: 0.8em; color: #777; margin-left: auto;">
