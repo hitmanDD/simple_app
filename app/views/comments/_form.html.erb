@@ -22,3 +22,55 @@
                data: { target: "counter-submit" }, 
                style: "background: #007bff; color: white; border: none; padding: 7px 15px; border-radius: 4px; cursor: pointer;" %>
 <% end %>
+
+<script>
+  // Ждем, пока браузер полностью загрузит HTML-структуру страницы
+  document.addEventListener("DOMContentLoaded", () => {
+    // Находим форму по её data-атрибуту behavior
+    const form = document.querySelector('[data-behavior="char-counter-form"]');
+
+    if (form) {
+      // Находим элементы строго ВНУТРИ этой формы по твоим data-target
+      const textarea = form.querySelector('[data-target="counter-input"]');
+      const counterDisplay = form.querySelector('[data-target="counter-display"]');
+      const submitBtn = form.querySelector('[data-target="counter-submit"]');
+
+      // Проверяем, что все элементы успешно нашлись
+      if (textarea && counterDisplay) {
+        
+        // Слушаем событие ввода текста (input) в поле
+        textarea.addEventListener("input", () => {
+          const currentLength = textarea.value.length;
+          const maxLength = 500;
+
+          // 1. Обновляем цифры на экране
+          counterDisplay.textContent = `${currentLength} / ${maxLength}`;
+
+          // 2. Проверяем превышение лимита
+          if (currentLength > maxLength) {
+            counterDisplay.style.color = "#dc3545"; // Красный цвет ошибки
+            counterDisplay.style.fontWeight = "bold";
+            
+            // Опционально: можно заблокировать кнопку отправки при превышении
+            if (submitBtn) {
+              submitBtn.disabled = true;
+              submitBtn.style.opacity = "0.5";
+              submitBtn.style.cursor = "not-allowed";
+            }
+          } else {
+            counterDisplay.style.color = "#777";    // Возвращаем исходный серый
+            counterDisplay.style.fontWeight = "normal";
+            
+            // Разблокируем кнопку, если всё в порядке
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.style.opacity = "1";
+              submitBtn.style.cursor = "pointer";
+            }
+          }
+        });
+
+      }
+    }
+  });
+</script>
