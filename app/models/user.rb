@@ -30,6 +30,12 @@ class User < ApplicationRecord
   # Напоминания пользователя (Кастомная фича 2)
   has_many :reminders, dependent: :destroy
 
+  # --- НОВЫЙ БЛОК: СИСТЕМА НАГРАД И АЧИВОК ---
+  # Связь «многие-ко-многим» с таблицей ачивок через промежуточную user_badges
+  has_many :user_badges, dependent: :destroy
+  has_many :badges, through: :user_badges
+  # ---------------------------------------------------------------
+
   # --- ГЛАВА 14: СВЯЗИ ДЛЯ ПОДПИСОК (Following/Followers) ---
   has_many :active_relationships, class_name:  "Relationship",
                                   foreign_key: "follower_id",
