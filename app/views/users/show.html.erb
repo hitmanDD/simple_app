@@ -6,10 +6,40 @@
     <p style="color: #666; font-size: 0.9em;">Email: <%= @user.email %></p>
     
     <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px;">
-      <p>Статус: <span style="color: #777;">Оффлайн</span></p>
+      <% # --- ИСПРАВЛЕНИЕ: Интеграция динамического статуса сети из модели User --- %>
+      <p>Статус: 
+        <% if @user.online? %>
+          <span style="color: #28a745; font-weight: bold;">В сети</span>
+        <% else %>
+          <span style="color: #777;">Оффлайн</span>
+        <% end %>
+      </p>
+      
       <p style="font-size: 0.85em;">На сайте с:<br> <%= time_ago_in_words(@user.created_at) %> назад</p>
-      <p style="font-size: 0.85em; color: #999;">Активность:<br> Был(а) в сети 6 days назад</p>
+      
+      <% # --- ИСПРАВЛЕНИЕ: Вывод реального времени последнего входа через метод модели --- %>
+      <p style="font-size: 0.85em; color: #999;">Активность:<br> <%= @user.last_seen_info %></p>
     </div>
+
+    <% # --- НАШ НОВЫЙ БЛОК: СИСТЕМА НАГРАД И АЧИВОК (Гармонично под блоком активности) --- %>
+    <% if @user.badges.any? %>
+      <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
+        <h4 style="margin: 0 0 10px 0; font-size: 0.95em; color: #444; text-transform: uppercase; letter-spacing: 0.5px;">
+          Награды (<%= @user.badges.count %>)
+        </h4>
+        <% # Сетка для иконок: выстраивает эмодзи в ряд с красивым фоном в тон левой панели %>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; background: #fdfdfd; padding: 10px; border-radius: 6px; border: 1px solid #f0f0f0;">
+          <% @user.badges.each do |badge| %>
+            <% # Элемент награды: при наведении мыши показывает описание через стандартный тег title %>
+            <div title="<%= badge.description %>" style="font-size: 26px; cursor: help; display: inline-block; line-height: 1; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+              <%= badge.icon %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+    <% # ----------------------------------------------------------------------------- %>
+
   </div>
 
   <% # --- ПРАВАЯ КОЛОНКА (Стена с прокруткой) --- %>
