@@ -12,6 +12,14 @@ class MicropostsController < ApplicationController
     
     respond_to do |format|
       if @micropost.save
+        # === АВТОМАТИЧЕСКАЯ ВЫДАЧА АЧИВКИ ===
+        # Находим ачивку "Первый шаг" по её ID
+        #first_step_badge = Badge.find_by(id: 1)
+        # Выдаем её пользователю (метод award_badge сам проверит, нет ли её уже)
+        #current_user.award_badge(first_step_badge) if first_step_badge
+        #логику в микропосте сделали и эту закомментил
+        # =====================================
+
         flash.now[:success] = "Пост создан!" # НОВАЯ ФИЧА: .now нужен, чтобы флеш отобразился при Turbo-ответе
         format.html { redirect_to root_url }
         format.turbo_stream # НОВАЯ ФИЧА: Ищет файл create.turbo_stream.erb для магии без перезагрузки
