@@ -1,6 +1,18 @@
-<%= form_with(model: @note, local: true) do |f| %>
+<%# 
+  Форма для создания персональных заметок пользователя.
+  Использует безопасную ленивую инициализацию объекта, если @note равен nil.
+%>
+<%= form_with(model: @note || current_user.notes.build, local: true) do |f| %>
+  
+  <%# Вывод ошибок валидации, если они есть %>
+  <%= render 'shared/error_messages', object: f.object if respond_to?(:render) && lookup_context.exists?('shared/_error_messages') %>
+
   <div class="field">
-    <%= f.text_area :content, placeholder: "Напишите новую заметку..." %>
+    <%# Важно: id: "content" сохранен для точного поиска текстового поля драйвером Capybara в RSpec %>
+    <%= f.text_area :content, placeholder: "Напишите новую заметку...", id: "content" %>
   </div>
+
+  <%# Кнопка отправки формы. Класс .btn-primary используется стилями Bootstrap %>
   <%= f.submit "Опубликовать", class: "btn btn-primary" %>
+
 <% end %>

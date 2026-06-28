@@ -15,8 +15,9 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     @notes = @user.notes # Загружаем заметки
     
-    # ГЛАВА 13: Загружаем микросообщения пользователя с пагинацией
-    @microposts = @user.microposts.paginate(page: params[:page])
+    # ИСПРАВЛЕНО ДЛЯ PAGY: Загружаем микросообщения пользователя с пагинацией Pagy.
+    # Параметр :page_microposts изолирует клики от пагинации комментариев стены.
+    @pagy_microposts, @microposts = pagy(@user.microposts.order(created_at: :desc), page_param: :page_microposts, items: 10)
     
     # --- НОВЫЙ БЛОК: ИНТЕГРАЦИЯ PAGY ДЛЯ СТЕНЫ ПРОФИЛЯ ---
     # Загружаем записи на стене с пагинацией Pagy от новых к старым. Переменная :page_comments изолирует клики по страницам стены.

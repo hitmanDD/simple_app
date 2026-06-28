@@ -30,12 +30,6 @@ gem "cssbundling-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
-# Use Redis adapter to run Action Cable in production
-# gem "redis", "~> 4.0"
-
-# Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
-# gem "kredis"
-
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 gem "bcrypt", "~> 3.1.7"
 
@@ -45,40 +39,35 @@ gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 
-# Use Sass to process CSS
-# gem "sassc-rails"
+# Глобальные гемы, доступные во всех окружениях
+gem 'will_paginate'
+gem 'sassc-rails'
+gem "importmap-rails"
+gem 'pagy', '~> 5.10'
 
-# Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-# gem "image_processing", "~> 1.2"
-
+# =========================================================================
+# ОКРУЖЕНИЕ: ОБЩЕЕ ДЛЯ РАЗРАБОТКИ И ТЕСТИРОВАНИЯ (DEVELOPMENT & TEST)
+# =========================================================================
 group :development, :test do
-  # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
-
   gem 'rails-controller-testing'
-
   gem 'rspec-rails', '~> 7.0' 
 end
 
+# =========================================================================
+# ОКРУЖЕНИЕ: СТРОГО ДЛЯ РАЗРАБОТКИ (DEVELOPMENT ONLY)
+# =========================================================================
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
+  # ИСПРАВЛЕНО: Теперь гем изолирован и не будет взрывать тестовую среду
   gem "web-console"
-
   gem 'letter_opener'
-  # Add speed badges [https://github.com/MiniProfiler/rack-mini-profiler]
-  # gem "rack-mini-profiler"
-
-  # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
-  # gem "spring"
-
 end
 
-  gem 'will_paginate'
-  #Закоментировал видимо конфликтуют с выше гемом
-  #gem 'bootstrap-will_paginate' 
-  
-  gem 'sassc-rails'
-
-  gem "importmap-rails"
-
-  gem 'pagy', '~> 5.10'
+# =========================================================================
+# ОКРУЖЕНИЕ: СТРОГО ДЛЯ ТЕСТИРОВАНИЯ (TEST ONLY)
+# =========================================================================
+group :test do
+  # Добавляем capybara для поддержки System Specs
+  gem 'capybara'
+end

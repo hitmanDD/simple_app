@@ -131,7 +131,7 @@ class User < ApplicationRecord
     following.include?(other_user)
   end
 
-  # === ЛЕНТА НОВОСТЕЙ ===
+  # === ЛЕНТА НОВОСТЕЙ ПО КНИГЕ (Только Микропосты с подписками) ===
   def feed
     following_ids_subselect = "SELECT followed_id FROM relationships WHERE follower_id = :user_id"
     

@@ -1,15 +1,16 @@
 class StaticPagesController < ApplicationController
-  def home
+def home
     if logged_in?
-      # --- ВАШ СТАРЫЙ ВАРИАНТ (Если у вас была только форма для заметок) ---
-      # @note = current_user.notes.build if logged_in?
-
-      # --- НОВЫЙ ВАРИАНТ ПО КНИГЕ ---
       # Создаем пустой объект микросообщения для формы в сайдбаре (Глава 13)
       @micropost  = current_user.microposts.build
       
-      # Получаем ленту новостей с пагинацией для текущего юзера (Глава 14)
-      @feed_items = current_user.feed.paginate(page: params[:page])
+      # 1. СЛУЖЕБНАЯ СОЦИАЛЬНАЯ ЛЕНТА (Микропосты по книге Хартла)
+      # Выводим по 10 штук, а page_param предотвращает конфликт с пагинацией заметок
+      @pagy_microposts, @feed_items = pagy(current_user.feed, page_param: :microposts_page, items: 10)
+      
+      # 2. ВАШ ПРИВАТНЫЙ БЛОКНОТ (Личные заметки — только текущего пользователя)
+      # Выводим строго личные заметки по 10 штук
+      @pagy_notes, @notes = pagy(current_user.notes.order(created_at: :desc), page_param: :notes_page, items: 10)
     end
   end
 

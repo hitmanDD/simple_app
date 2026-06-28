@@ -24,6 +24,10 @@ end
 
 # Этот кусок нужен для интеграционных тестов (в папке integration)
 class ActionDispatch::IntegrationTest
+  # Включает бэкенд и фронтенд хелперы Pagy для работы путей и верстки в тестах
+  include Pagy::Backend
+  include Pagy::Frontend
+
   # Входим в систему внутри интеграционного теста
   def log_in_as(user, password: 'password', remember_me: '1')
     post login_path, params: { session: { email: user.email,

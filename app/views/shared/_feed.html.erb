@@ -1,7 +1,23 @@
-<%# ➔ ИСПРАВЛЕНИЕ: Добавляем безопасную проверку на присутствие объекта %>
 <% if @feed_items && @feed_items.any? %>
-  <ol class="microposts">
-    <%= render @feed_items %>
+  <ol class="microposts" style="list-style: none; padding: 0;">
+    <% @feed_items.each do |micropost| %>
+      <li id="micropost-<%= micropost.id %>" style="padding: 10px 0; border-top: 1px solid #e8e8e8;">
+        <span class="user" style="font-weight: bold; display: block;">
+          <%= link_to micropost.user.name, micropost.user %>
+        </span>
+        <span class="content" style="display: block;"><%= micropost.content %></span>
+        <span class="timestamp" style="color: #777; display: block; font-size: 0.85em;">
+          Опубликовано <%= time_ago_in_words(micropost.created_at) %> назад.
+          <% if current_user?(micropost.user) %>
+            <%= link_to "удалить", micropost_path(micropost), data: { "turbo-method": :delete }, style: "color: red; margin-left: 10px;" %>
+          <% end %>
+        </span>
+      </li>
+    <% end %>
   </ol>
-  <%= will_paginate @feed_items %>
+  
+  <%# Пагинация Pagy для микропостов %>
+  <% if @pagy_microposts && @pagy_microposts.pages > 1 %>
+    <%== pagy_bootstrap_nav(@pagy_microposts) %>
+  <% end %>
 <% end %>
