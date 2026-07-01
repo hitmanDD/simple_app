@@ -24,6 +24,10 @@ class User < ApplicationRecord
   has_many :microposts, dependent: :destroy
   has_many :reminders, dependent: :destroy
 
+  # --- НОВЫЙ КОД: СВЯЗИ ДЛЯ СИСТЕМЫ МОНЕТИЗАЦИИ ---
+  # Связываем пользователя с его заказами ачивок (при удалении юзера удалятся и заказы)
+  has_many :orders, dependent: :destroy
+
   # --- СИСТЕМА НАГРАД И АЧИВОК ---
   has_many :user_badges, dependent: :destroy
   has_many :badges, through: :user_badges

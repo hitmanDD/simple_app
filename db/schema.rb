@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_06_09_181531) do
+ActiveRecord::Schema[7.0].define(version: 2026_07_01_143348) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -40,6 +40,16 @@ ActiveRecord::Schema[7.0].define(version: 2026_06_09_181531) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "badge_products", force: :cascade do |t|
+    t.string "badge_type", null: false
+    t.decimal "price", precision: 10, scale: 2, null: false
+    t.string "currency", default: "USD", null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["badge_type"], name: "index_badge_products_on_badge_type", unique: true
   end
 
   create_table "badges", force: :cascade do |t|
@@ -87,6 +97,21 @@ ActiveRecord::Schema[7.0].define(version: 2026_06_09_181531) do
     t.index ["user_id"], name: "index_notes_on_user_id"
   end
 
+  create_table "orders", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "badge_product_id", null: false
+    t.string "status", default: "pending", null: false
+    t.decimal "amount", precision: 10, scale: 2, null: false
+    t.string "currency", null: false
+    t.string "payment_provider", null: false
+    t.string "provider_order_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["badge_product_id"], name: "index_orders_on_badge_product_id"
+    t.index ["provider_order_id"], name: "index_orders_on_provider_order_id", unique: true
+    t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
   create_table "relationships", force: :cascade do |t|
     t.integer "follower_id"
     t.integer "followed_id"
@@ -132,6 +157,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_06_09_181531) do
   add_foreign_key "likes", "users"
   add_foreign_key "microposts", "users"
   add_foreign_key "notes", "users"
+  add_foreign_key "orders", "badge_products"
+  add_foreign_key "orders", "users"
   add_foreign_key "user_badges", "badges"
   add_foreign_key "user_badges", "users"
 end

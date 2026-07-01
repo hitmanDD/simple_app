@@ -18,22 +18,76 @@
       <p style="font-size: 0.85em;">На сайте с:<br> <%= time_ago_in_words(@user.created_at) %> назад</p>
       
       <% # --- ИСПРАВЛЕНИЕ: Вывод реального времени последнего входа через метод модели --- %>
-      <p style="font-size: 0.85em; color: #999;">Активность:<br> <%= @user.last_seen_info %></p>
+      <p style="font-size: 0.85em; color: #999;">Active:<br> <%= @user.last_seen_info %></p>
     </div>
 
-    <% # --- НАШ НОВЫЙ БЛОК: СИСТЕМА НАГРАД И АЧИВОК (Гармонично под блоком активности) --- %>
-    <% if @user.badges.any? %>
+    <% # --- НОВЫЙ КОД: ПОДКЛЮЧЕНИЕ ТУРБО-СТРИМОВ ДЛЯ ОБНОВЛЕНИЯ АЧИВОК И УВЕДОМЛЕНИЙ --- %>
+    <% if @user == current_user %>
+      <%= turbo_stream_from "user_#{@user.id}_badges" %>
+      <%= turbo_stream_from "user_#{@user.id}_notifications" %>
+    <% end %>
+
+     <% # --- НОВЫЙ КОД: ИНТЕРАКТИВНЫЙ МАГАЗИН ПЛАТНЫХ АЧИВОК --- %>
+    <% if @user == current_user %>
       <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
         <h4 style="margin: 0 0 10px 0; font-size: 0.95em; color: #444; text-transform: uppercase; letter-spacing: 0.5px;">
-          Награды (<%= @user.badges.count %>)
+          Магазин наград
         </h4>
-        <% # Сетка для иконок: выстраивает эмодзи в ряд с красивым фоном в тон левой панели %>
-        <div style="display: flex; flex-wrap: wrap; gap: 10px; background: #fdfdfd; padding: 10px; border-radius: 6px; border: 1px solid #f0f0f0;">
-          <% @user.badges.each do |badge| %>
-            <% # Элемент награды: при наведении мыши показывает описание через стандартный тег title %>
-            <div title="<%= badge.description %>" style="font-size: 26px; cursor: help; display: inline-block; line-height: 1; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-              <%= badge.icon %>
-            </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <% 
+            # Собираем типы уже купленных наград, чтобы скрыть их из магазина
+            owned_types = @user.badges.map { |b| 
+              if b.respond_to?(:badge_type) then b.badge_type 
+              elsif b.respond_to?(:name) then b.name 
+              else b.id.to_s end 
+            }
+            # Загружаем товары, которые пользователь еще может приобрести
+            available_products = BadgeProduct.where(active: true).where.not(badge_type: owned_types) 
+          %>
+          
+          <% if available_products.any? %>
+            <% available_products.each do |product| %>
+              <% 
+                # Кастомные иконки для трех ачивок в зависимости от типа
+                badge_icon = case product.badge_type
+                             when 'sprout' then '🌱'
+                             when 'gold_medal' then '🥇'
+                             else '🏅'
+                             end
+              %>
+              
+              <% # Тег details позволяет скрывать контент и показывать его только при клике %>
+              <details style="background: #f9f9f9; border: 1px solid #eee; border-radius: 6px; padding: 6px 10px; cursor: pointer; transition: background 0.2s;">
+                
+                <% # Заголовок, который виден всегда (иконка ачивки) %>
+                <summary style="display: flex; align-items: center; justify-content: space-between; list-style: none; font-size: 24px; outline: none;">
+                  <span><%= badge_icon %></span>
+                  <span style="font-size: 0.55em; color: #007bff; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">Разблокировать</span>
+                </summary>
+
+                <% # Выпадающий скрытый блок с ценником и ссылкой оплаты %>
+                <% # УСТРАНЕНИЕ БАГА: выносим форму в чистый HTML-вид с явным отключением turbo через строку %>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 8px; border-top: 1px dashed #ddd; cursor: default;" onclick="event.stopPropagation();">
+                  <div>
+                    <div style="font-size: 0.85em; font-weight: bold; color: #333;"><%= product.badge_type.humanize %></div>
+                    <div style="font-size: 0.8em; color: #28a745; font-weight: bold;"><%= product.price %> <%= product.currency %></div>
+                  </div>
+
+                  <form action="<%= orders_path %>" method="post" data-turbo="false" style="margin: 0;">
+                    <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+                    <input type="hidden" name="badge_type" value="<%= product.badge_type %>">
+                    <input type="hidden" name="currency" value="<%= product.currency %>">
+                    <button type="submit" style="background: #28a745; color: white; border: none; padding: 6px 12px; font-size: 0.8em; border-radius: 4px; font-weight: bold; cursor: pointer;">
+                      Оплатить
+                    </button>
+                  </form>
+                </div>
+
+              </details>
+            <% end %>
+          <% else %>
+            <p style="color: #999; font-size: 0.85em; margin: 0;">Вы приобрели все доступные награды!</p>
           <% end %>
         </div>
       </div>
@@ -61,7 +115,6 @@
     </ul>
 
     <% # --- НОВЫЙ БЛОК: КНОПКИ ПАГИНАЦИИ ДЛЯ СТЕНЫ --- %>
-    <% # Отображаем пагинацию Pagy только если записей больше, чем умещается на одной странице %>
     <% if @pagy_comments.pages > 1 %>
       <div style="margin-top: 20px; text-align: center;">
         <%== pagy_nav(@pagy_comments) %>

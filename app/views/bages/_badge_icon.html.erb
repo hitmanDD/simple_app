@@ -1,0 +1,14 @@
+<% # app/views/badges/_badge_icon.html.erb %>
+<% 
+  # Безопасно вытаскиваем иконку и описание, если объект badge пустой или старая модель отличается
+  icon = badge.respond_to?(:icon) ? badge.icon : '🏅'
+  description = badge.respond_to?(:description) ? badge.description : badge_type.humanize
+%>
+
+<% # Элемент награды: при наведении мыши показывает описание через стандартный тег title %>
+<div title="<%= description %>" 
+     style="font-size: 26px; cursor: help; display: inline-block; line-height: 1; transition: transform 0.2s;" 
+     onmouseover="this.style.transform='scale(1.1)'" 
+     onmouseout="this.style.transform='scale(1)'">
+  <%= icon %>
+</div>

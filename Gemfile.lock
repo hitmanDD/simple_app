@@ -1,6 +1,8 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    aasm (5.5.2)
+      concurrent-ruby (~> 1.0)
     actioncable (7.0.10)
       actionpack (= 7.0.10)
       activesupport (= 7.0.10)
@@ -247,6 +249,7 @@ GEM
       sprockets-rails
       tilt
     securerandom (0.3.2)
+    simple_command (1.0.1)
     sprockets (4.2.2)
       concurrent-ruby (~> 1.0)
       logger
@@ -285,6 +288,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  aasm
   bcrypt (~> 3.1.7)
   bootsnap
   capybara
@@ -301,6 +305,7 @@ DEPENDENCIES
   rails-controller-testing
   rspec-rails (~> 7.0)
   sassc-rails
+  simple_command
   sprockets-rails
   stimulus-rails
   turbo-rails

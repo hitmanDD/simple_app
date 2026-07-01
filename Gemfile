@@ -71,3 +71,9 @@ group :test do
   # Добавляем capybara для поддержки System Specs
   gem 'capybara'
 end
+
+# Гем для сервисного слоя и удобной обработки ошибок
+gem 'simple_command'
+
+# Гем для стейт-машины управления статусами заказов
+gem 'aasm'

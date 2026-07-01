@@ -62,4 +62,21 @@ Rails.application.routes.draw do
   
   # Маршруты для микросообщений (постов)
   resources :microposts,          only: [:create, :destroy]
+
+  # --- НОВЫЙ КОД: МАРШРУТЫ ДЛЯ СИСТЕМЫ МОНЕТИЗАЦИИ И ПОКУПКИ АЧИВОК ---
+  # Добавляет хелпер orders_path и связывает отправку формы покупки с OrdersController#create
+  resources :orders, only: [:create]
+  
+  # --- ИСПРАВЛЕНИЕ ДЛЯ ССЫЛКИ ПОКУПКИ ---
+  # Разрешаем создавать заказ через метод GET, чтобы тег details не блокировал отправку формы
+  get '/orders', to: 'orders#create'
+
+  # Пространство имен для приема вебхуков от платежных систем
+  namespace :webhooks do
+    post 'stripe', to: 'stripe#receive'
+    
+    # Вспомогательный роут для локальной симуляции успешной оплаты в WSL2 без интернета
+    get 'stripe_mock_success', to: 'stripe#mock_success'
+  end
+  # --------------------------------------------------------------------
 end
