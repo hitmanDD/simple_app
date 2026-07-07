@@ -1,0 +1,8 @@
+<h2>Доступные ростки для Лолы</h2>
+
+<div class="sprouts-grid">
+  <!-- Перебираем все ростки из базы данных и рендерим независимые компоненты -->
+  <% @sprouts.each do |sprout| %>
+    <%= render(SproutComponent.new(sprout: sprout, purchase: @purchase)) %>
+  <% end %>
+</div>
