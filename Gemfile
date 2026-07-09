@@ -77,3 +77,5 @@ gem 'simple_command'
 
 # Гем для стейт-машины управления статусами заказов
 gem 'aasm'
+
+gem "view_component"

@@ -1,22 +1,27 @@
-# app/components/sprout_component.rb
 class SproutComponent < ViewComponent::Base
+  # Подключаем хелпер Turbo, чтобы метод turbo_frame_tag заработал внутри HTML
+  include Turbo::FramesHelper
+
+  # Автоматически создаем методы-геттеры для sprout и purchase, чтобы они были доступны в HTML без знака @
+  attr_reader :sprout, :purchase
+
   # Инициализируем компонент, принимая объект ростка и объект покупки (для формы)
   def initialize(sprout:, purchase:)
     @sprout = sprout
     @purchase = purchase
   end
 
-  private
-
-  # С: форматирование цены инкапсулировано внутри компонента
+  # Метод форматирования цены (должен быть публичным для шаблона)
   def formatted_price
-    # Если цена в копейках/центах, делим на 100 для вывода, иначе выводим как есть
-    "#{sprintf('%.2f', @sprout.price)} #{@sprout.currency || 'RUB'}"
+    price = sprout.respond_to?(:price) ? sprout.price : 100.00
+    currency = sprout.respond_to?(:currency) ? sprout.currency : 'RUB'
+    
+    "#{sprintf('%.2f', price)} #{currency || 'RUB'}"
   end
 
-  # Метод определяет цвет рамки в зависимости от типа ростка
+  # Метод определяет цвет рамки (должен быть публичным для шаблона)
   def badge_class
-    case @sprout.badge_type
+    case sprout.badge_type
     when 'vip' then 'border-purple-active'
     when 'premium' then 'border-gold-active'
     else 'border-standard'
